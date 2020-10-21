@@ -153,7 +153,7 @@ def submenu_2(d, t):
             d.send_data_broadcast("Start sniffing")
             #send out command to start keystroke sniffing
             rx_all(d, t)
-        except (KeyboardInterrupt, Exception) as e
+        except (KeyboardInterrupt, Exception) as e:
             #disabling keystroke transmission since we are no longer attached
             #password for Disable keystrokes = ce8hovevemu@ap*B+H3s
             d.send_data_broadcast("Stop transmission password")
