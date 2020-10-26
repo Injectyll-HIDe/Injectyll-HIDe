@@ -17,27 +17,27 @@ Keyboard -> OTG -> Trinket M0 -> via Serial -> BLEPeripheral (BLEp) -> via USB -
 
 ///Phase 1 - Key Sniffing///
 
-    [ ] Get UART connection between Xbee and BLEC
+    [x] Get UART connection between Xbee and BLEC
 
-    [ ] Program BLEc to passthrough data to Xbee
+    [x] Program BLEc to passthrough data to Xbee
 
-    [ ] Program XbeeBLE to translate packets and relay to XbeeC2
+    [x] Program XbeeBLE to translate packets and relay to XbeeC2
 
-    [ ] Program XbeeC2 to send commands
+    [x] Program XbeeC2 to send commands
 
-    [ ] Program XbeeBLE to pass commands through to BLEc
+    [x] Program XbeeBLE to pass commands through to BLEc
 
-    [ ] Program BLEc to pass commands through to BLEp
+    [x] Program BLEc to pass commands through to BLEp
 
 ///Phase 2 - Key Injection///
 
-    [ ] method to return file list to c2
+    [x] method to return file list to c2
 
     [ ] set Attack file function to load up attack script
 
     [ ] launch attack (with confirmation), may be combined with above if choosing from list
 
-    [ ] function to parse script into keyboard commands
+    [x] function to parse script into keyboard commands
 
     [ ] lockout usb passthrough function until injection complete
 
@@ -75,3 +75,7 @@ Keyboard -> OTG -> Trinket M0 -> via Serial -> BLEPeripheral (BLEp) -> via USB -
 
     [ ] incorporate battery with XBee Things board
 
+
+///Other ideas///
+  [ ] add ability to add attack scripts from C2 to the SD card on the BLEp
+  [ ] Set C2 to auto-populate from an attack script file saved locally instead of hardcoding list in C2
