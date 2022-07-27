@@ -1,0 +1,3 @@
+BSIDES = https://docs.google.com/presentation/d/1-5DAadvUKAeuJwCkier_70fuVwm8VEfLnAk03BWnmN8/edit#slide=id.g13ac94d27b0_0_46
+HHV = https://docs.google.com/presentation/d/1TInrxpU9VuAKqFKpazQDUrkJH-5Xf0RtEvX2fO5McvA/edit#slide=id.p
+Defcon Demo Labs = https://docs.google.com/presentation/d/1NuQdzk8ISS0-LhfANY_T7SlFXJwwzPBoeg7Xv3Fy520/edit#slide=id.g13ac94d27b0_0_46
