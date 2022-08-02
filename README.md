@@ -18,7 +18,7 @@ Feel free to ask us in our Discord or submit a Pull Request/issue to modificatio
 
 ## Demo
 
-<<YoutubeLink>>
+<https://www.youtube.com/channel/UCUG-gIV2QooQGeMTGCVMTpQ>
 
 ## License
 
