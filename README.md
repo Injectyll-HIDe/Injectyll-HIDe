@@ -34,8 +34,6 @@ You will need a USB interface for the C2 device to connect the radio to your com
 
 Install the digi-xbee library so the python script can interface with the radio along with additional dependencies.
 
-Currently the Digi Python Library only works with Python v3.8.x, Python 3.9.x will not handle the libraries correctly
-
 ```bash
   pip install digi-xbee
   pip install blessed
