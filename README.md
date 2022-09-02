@@ -1,7 +1,6 @@
-
 # Injectyll-HIDe
 
-HID implant that allows for key recording and injection over a Digimesh RF network.
+Injectyll-HIDe is a customizeable implant that allow for remote key recording and injection over a network that you control and that exists outside of the target infrastructure.
 
 ## Authors
 
@@ -25,39 +24,8 @@ Feel free to ask us in our Discord or submit a Pull Request/issue to modificatio
 [MIT](https://choosealicense.com/licenses/mit/)
 
 
-## Running the C2 (ihide.py)
-
-
-You will need a USB interface for the C2 device to connect the radio to your computer. Sparkfun sells on here:
- https://www.sparkfun.com/products/11697
-
-
-Install the digi-xbee library so the python script can interface with the radio along with additional dependencies.
-
-```bash
-  pip install digi-xbee
-  pip install blessed
-
-```
-
-With your xbee radio plugged in, review your device manager to see what COM port the xbee radio is connected to.
-
-Now run the python script
-```bash
-  python ihide.py
-
-```
-
-When you run the python file you will need to select the COM port and baud rate (default is 9600)
-
-
-## Implant Installation
-
-Pending...
 ## Support
 
 For support, join our discord or submit an issue to this repo.
 
 Discord: https://discord.gg/uxzFeKnwdF
-
-
