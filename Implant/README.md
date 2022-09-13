@@ -52,7 +52,7 @@ A - MicroSD Card                          |     |   |   |         |             
 Connector Option --------------------------     |   |   |         |             |  
 A - USB-A Through Hole                          |   |   |         |             |  
                                                 |   |   |         |             |  
-External Crystal for Chips ------------ ---------   |   |         |             |  
+External Crystal for Chips ----------------------   |   |         |             |  
 C - 32 MHz Crystal                                  |   |         |             |  
 N - No External Cyrstal                             |   |         |             |  
                                                     |   |         |             |  
