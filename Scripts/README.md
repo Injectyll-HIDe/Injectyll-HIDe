@@ -9,7 +9,5 @@ Scripting for Injectyll-HIDe using a Rubber Ducky style syntax. Give one command
 - Release All Keys: ra- 
 
 ## Currently Available Scripts
-
-1) reverse-shell.txt
-> This script uses PowerShell to launch a reverse shell through the COM port, back to the C2. The shell will exist as a background process until it is terminated.  Once launched, the user will have to select the option in the C2 to connect to the open session.
-2) Coming soon...
+Find our scripts in our script repo:
+https://github.com/Injectyll-HIDe/Injection_Scripts

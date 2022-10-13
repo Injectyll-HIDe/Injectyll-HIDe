@@ -445,7 +445,7 @@ inject("ps-LEFT_GUI");
 inject("dl-250");
 inject("ra-");
 inject("dl-1000");
-inject("pt-powershell");
+inject("pt-powershell.exe");
 inject("dl-250");
 inject("ps-RETURN");
 inject("ra-");
