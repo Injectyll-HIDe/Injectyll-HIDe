@@ -25,4 +25,4 @@ XCTU is an interface from Digi that allows you to configure the radios.
 8) Change the "API Configuration" to "API Mode With Escapes [2]"
 9) Change device,network, and encryption configurations as desired.
 
-![XCTU Configuration Settings](../../Images/XCTU_Config.png)
+![XCTU Configuration Settings](../../Images/XCTU_config.png)
