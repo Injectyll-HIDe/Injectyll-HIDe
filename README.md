@@ -7,6 +7,12 @@ Injectyll-HIDe is a customizeable implant that allow for remote key recording an
 - Jonathan Fischer - [@c4m0ufl4g3](https://mobile.twitter.com/c4m0ufl4g3)
 - Jeremy Miller - [@allTheJurm](https://mobile.twitter.com/allTheJurm)
 
+## Quick Start
+1. [Flash your Implant](/Implant)
+2. [Setup your C2 Radio](/Radios)
+3. [Setup your C2](/C2)
+4. [Optional - Load up some payloads](/Scripts)
+5. Profit
 
 ## Contributing
 
