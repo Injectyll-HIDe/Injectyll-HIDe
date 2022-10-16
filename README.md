@@ -1,6 +1,6 @@
 <h3 align="center">
 <a href="http://Injectyll-hide.com">
-<img src="/Images/Injectyll-HIDe_logo.jpg" align="center" alt="Injectyll HIDe logo" border="0" style="max-width: 35%;">
+<img src="/Images/Injectyll-HIDe_logo_inverted_small.jpg" align="center" alt="Injectyll HIDe logo" border="0">
 </a>
 </h3>
 
