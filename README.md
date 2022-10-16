@@ -35,3 +35,4 @@ Feel free to ask us in our Discord or submit a Pull Request/issue to modificatio
 For support, join our discord or submit an issue to this repo.
 
 Discord: https://discord.gg/uxzFeKnwdF
+<iframe src="https://discordapp.com/widget?id=999696439968006165&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
