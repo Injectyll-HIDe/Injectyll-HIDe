@@ -76,10 +76,15 @@ Revision -----------------------------------------------------------------------
 
 ## Implant Visual Identification
 IH-AA-AAA-CNC-XXX-001
+
 ![IH-AA-AAA-CNC-XXX-001](../Images/IH-AA-AAA-CNC-XXX-001.jpg)
+
 IH-AA-AAA-NEA-XXX-001
+
 ![IH-AA-AAA-NEA-XXX-001](../Images/IH-AA-AAA-NEA-XXX-001.jpg)
+
 IH-AA-AAA-NNA-XXX-001
+
 ![IH-AA-AAA-NNA-XXX-001](../Images/IH-AA-AAA-NNA-XXX-001.jpg)
 
 ## Programming the Implant
