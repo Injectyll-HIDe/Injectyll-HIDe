@@ -1,3 +1,9 @@
+<h3 align="center">
+<a href="http://Injectyll-hide.com">
+<img src="/Images/Injectyll-HIDe_logo_inverted_small.jpg" align="center" alt="Injectyll HIDe logo" border="0">
+</a>
+</h3>
+
 # Injectyll-HIDe
 
 Injectyll-HIDe is a customizeable implant that allow for remote key recording and injection over a network that you control and that exists outside of the target infrastructure.
