@@ -3,33 +3,33 @@ Here is the documentation on the implant board related information specifically.
 
 ## Table of Contents
 
-1) [Implant Part Number Breakdown](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#implant-part-number-breakdown)
+1) [Implant Part Number Breakdown](#implant-part-number-breakdown)
 
-2) [Implant Visual Identification](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#implant-part-number-breakdown)
+2) [Implant Visual Identification](#implant-visual-identification)
 
-3) [Programming the Implant](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#programming-the-implant)
-    1) [Download and Install Arduino](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#download-and-install-arduino)
-    2) [MC1 Programming](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#mc1-programming)
-    3) [MC2 Programming](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#mc2-programming)
-    4) [Special Notes](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#special-notes)
+3) [Programming the Implant](#programming-the-implant)
+    1) [Download and Install Arduino](#download-and-install-arduino)
+    2) [MC1 Programming](#mc1-programming)
+    3) [MC2 Programming](#mc2-programming)
+    4) [Special Notes](#special-notes)
 
-4) [Vendor ID and Product ID](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#vendor-id-and-product-id)
-    1) [Identifying a device VID/PID](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#identifying-a-device-vidpid)
-        1) [Windows Device Manager](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#windows-device-manager)
-        2) [PowerShell](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#powershell)
-    2) [Changing VID/PID with Arduino](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#changing-vidpid-with-arduino)
+4) [Vendor ID and Product ID](#vendor-id-and-product-id)
+    1) [Identifying a device VID/PID](#identifying-a-device-vidpid)
+        1) [Windows Device Manager](#windows-device-manager)
+        2) [PowerShell](#powershell)
+    2) [Changing VID/PID with Arduino](#changing-vidpid-with-arduino)
 
-5) [Flashing the Bootloader](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#flashing-the-bootloader)
-    1) [Required Materials](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#required-materials)
-    2) [Pin Out](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#pin-out)
-    3) [Bootloader Procedure](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#bootloader-procedure)
-    4) [References](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#references)
+5) [Flashing the Bootloader](#flashing-the-bootloader)
+    1) [Required Materials](#required-materials)
+    2) [Pin Out](#pin-out)
+    3) [Bootloader Procedure](#bootloader-procedure)
+    4) [References](#references)
 
-6) [Memory](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#memory)
-    1) [Communication](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#communication)
-    2) [File System](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#file-system)
+6) [Memory](#memory)
+    1) [Communication](#communication)
+    2) [File System](#file-system)
 
-7) [Additional References](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#additional-references)
+7) [Additional References](#additional-references)
 
 ## Implant Part Number Breakdown
 <pre>
