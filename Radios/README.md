@@ -3,8 +3,8 @@
 This guide will walk you through setting up the XBee radios for use with the implant.
 ## Required Components
 
-- Digi XBee radio
-- USB adapter for radio
+- Digi XBee radio (https://hub.digi.com/support/products/digi-xbee/digi-xbee3/)
+- USB adapter for radio (https://www.sparkfun.com/products/11697)
 - Host computer
 
 ## XCTU
