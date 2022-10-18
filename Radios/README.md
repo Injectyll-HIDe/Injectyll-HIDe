@@ -26,4 +26,4 @@ XCTU is an interface from Digi that allows you to configure the radios.
 9) OPTIONAL: A recommended BD UART Baud Rate is 115200
 10) Change device,network, and encryption configurations as desired.
 
-![XCTU Configuration Settings](../../Images/XCTU_config.png)
+![XCTU Configuration Settings](../Images/XCTU_config.png)
