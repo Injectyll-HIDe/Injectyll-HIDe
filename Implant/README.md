@@ -5,29 +5,31 @@ Here is the documentation on the implant board related information specifically.
 
 1) [Implant Part Number Breakdown](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#implant-part-number-breakdown)
 
-2) [Programming the Implant](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#programming-the-implant)
+2) [Implant Visual Identification](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#implant-part-number-breakdown)
+
+3) [Programming the Implant](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#programming-the-implant)
     1) [Download and Install Arduino](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#download-and-install-arduino)
     2) [MC1 Programming](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#mc1-programming)
     3) [MC2 Programming](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#mc2-programming)
     4) [Special Notes](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#special-notes)
 
-3) [Vendor ID and Product ID](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#vendor-id-and-product-id)
+4) [Vendor ID and Product ID](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#vendor-id-and-product-id)
     1) [Identifying a device VID/PID](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#identifying-a-device-vidpid)
         1) [Windows Device Manager](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#windows-device-manager)
         2) [PowerShell](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#powershell)
     2) [Changing VID/PID with Arduino](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#changing-vidpid-with-arduino)
 
-4) [Flashing the Bootloader](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#flashing-the-bootloader)
+5) [Flashing the Bootloader](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#flashing-the-bootloader)
     1) [Required Materials](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#required-materials)
     2) [Pin Out](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#pin-out)
     3) [Bootloader Procedure](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#bootloader-procedure)
     4) [References](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#references)
 
-5) [Memory](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#memory)
+6) [Memory](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#memory)
     1) [Communication](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#communication)
     2) [File System](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#file-system)
 
-6) [Additional References](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#additional-references)
+7) [Additional References](https://github.com/c4m0ufl4g3/sample/tree/main/Implant#additional-references)
 
 ## Implant Part Number Breakdown
 <pre>
@@ -71,6 +73,14 @@ XXX - None                                                                      
                                                                                 |  
 Revision ------------------------------------------------------------------------  
 </pre>
+
+## Implant Visual Identification
+IH-AA-AAA-CNC-XXX-001
+![IH-AA-AAA-CNC-XXX-001](../Images/IH-AA-AAA-CNC-XXX-001.jpg)
+IH-AA-AAA-NEA-XXX-001
+![IH-AA-AAA-NEA-XXX-001](../Images/IH-AA-AAA-NEA-XXX-001.jpg)
+IH-AA-AAA-NNA-XXX-001
+![IH-AA-AAA-NNA-XXX-001](../Images/IH-AA-AAA-NNA-XXX-001.jpg)
 
 ## Programming the Implant
 
