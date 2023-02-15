@@ -427,7 +427,23 @@ def submenu_send_file(d,p):
         lines = f.readlines()
         for line in lines:
             sendLine = line.strip()
-            target_tx(d, t, sendLine)
+            #check initial instruction
+            instruction = line[:3]
+            if (instruction == "pt-"):
+                if (len(sendLine)>73):
+                    #if the string is over a length of 73, chunk it to prevent from overrunning radio buffer
+                    oldLine=sendLine[3:]
+                    n=70
+                    chunks=[oldLine[i:i+n] for i in range(0,len(oldLine), n)]
+                    for j in range(0,len(chunks)):
+                        #transmit chunks
+                        tempString="pt-"+str(chunks[j])
+                        target_tx(d, t, str(tempString))
+                        time.sleep(1.0)
+                else:
+                    target_tx(d, t, sendLine)
+            else:
+                target_tx(d, t, sendLine)
             time.sleep(1.0)
         time.sleep(2.0)
         target_tx(d, t, "EOF")
