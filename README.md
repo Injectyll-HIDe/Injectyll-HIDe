@@ -29,7 +29,9 @@ Feel free to ask us in our Discord or submit a Pull Request/issue to modificatio
 
 ## Demo
 
-<https://www.youtube.com/channel/UCUG-gIV2QooQGeMTGCVMTpQ>
+1. <https://www.youtube.com/channel/UCUG-gIV2QooQGeMTGCVMTpQ>
+
+2. https://www.youtube.com/watch?v=Lp2u49jfk-0&t=1s
 
 ## License
 
@@ -41,4 +43,3 @@ Feel free to ask us in our Discord or submit a Pull Request/issue to modificatio
 For support, join our discord or submit an issue to this repo.
 
 Discord: https://discord.gg/uxzFeKnwdF
-<iframe src="https://discordapp.com/widget?id=999696439968006165&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
