@@ -12,7 +12,6 @@
 #3) if key not previously present, modifier is checked for appropriate value and printed if key is previously seen, it is ignored
 #4) current packet is saved to prevArray
 
-# [ ] check the rest of the array to see if it contains the value if not found in the exact spot to avoid duplicates
 pressArray = ['K','0', '0', '0', '0', '0', '0', '0', '0']
 newArray = []
 keyArray = []
@@ -63,46 +62,33 @@ def getShift(m):
     shiftStatus = False
     if (m > 64):
         m -= 64
-        print(m)
     elif m == 64:
         m -= 64
-        print(m)
     if m > 32:
         shiftStatus = True
         m -= 32
-        print(m)
     elif m == 32:
         shiftStatus = True
         m -= 32
-        print(m)
     if m > 16:
         m -= 16
-        print(m)
     elif m == 16:
         m -= 16
-        print(m)
     if m > 8:
         m -= 8
-        print(m)
     elif m == 8:
         m -= 8
-        print(m)
     if m > 4:
         m -= 4
-        print(m)
     elif m == 4:
         m -= 4
-        print(m)
     if m > 2:
         m -= 2
-        print(m)
     elif m == 2:
         shiftStatus = True
         m -= 2
-        print(m)
     if m == 1:
         shiftStatus = False
-        print(m)
     return shiftStatus
 
 
@@ -328,7 +314,6 @@ if __name__ == '__main__':
     iF = open(inputFile, "r")
     Lines = iF.readlines()
     for line in Lines:
-        #print("Reading Line....")
         try:
             #clear newArray for writing incoming keystrokes
             if newArray:
@@ -347,15 +332,12 @@ if __name__ == '__main__':
                     if newArray[0] != "0":
                         intMod = int(newArray[0])
                         keyArray.append(getMod(intMod))
-                        #pressArray[0]=getMod[intMod]
                     else:
                         pressArray[s] = "0"      
                 else: #keypress instead of modifier
                     if newArray[s] != "0":
-                        #print("Key value: ", getLowerKey[newArray[s]])
                         keyArray.append(getLowerKey[newArray[s]])
             if len(keyArray) > 0:
-                #print(keyArray)
                 oF.write(str(keyArray)+"\r")
             else:
                 oF.write("<All Keys Released>\r")
