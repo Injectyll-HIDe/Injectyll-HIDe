@@ -747,10 +747,10 @@ def loop():
         elif option == '18':
             # password for deleting a file from SD card on a target implant
             submenu_fileSelect(device, deletePW, "delete")
-        elif option == '19:
+        elif option == '19':
             # password for resetting all toggle variables in a target implant
             submenu_toggle(device, "Reset all devices", "Reset target device", resetPW)
-        elif option == '20
+        elif option == '20':
             device.close()
             exit()
         else:
