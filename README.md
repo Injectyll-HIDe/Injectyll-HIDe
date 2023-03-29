@@ -31,7 +31,7 @@ Feel free to ask us in our Discord or submit a Pull Request/issue to modificatio
 
 1. [Injectyll-HIDe YouTube Channel Demo](https://www.youtube.com/channel/UCUG-gIV2QooQGeMTGCVMTpQ)
 
-2. [Hacked Existence Review] (https://www.youtube.com/watch?v=Lp2u49jfk-0&t=1s)
+2. [Hacked Existence Review](https://www.youtube.com/watch?v=Lp2u49jfk-0&t=1s)
 
 ## License
 
