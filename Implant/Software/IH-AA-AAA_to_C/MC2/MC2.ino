@@ -60,7 +60,7 @@ String terminalPW = "DEFAULTterminalPW";            //password for starting a re
 String terminalPWOFF = "DEFAULTterminalPWOFF";      //password for ending a remote powershell terminal on windows victim    - main menu option 17
 String exfilPW = "DEFAULTexfilPW";                  //password for copying files from a windows victim to the C2            - main menu option 13
 String exfilPWOFF = "DEFAULTexfilPWOFF";            //password for ending copying files from a windows victim to the C2     - main menu option 13
-String exfilPW = "DEFAULTexfilPWSD";                //password for copying files from a windows victim to the SD Card       - main menu option 14
+String exfilPWSD = "DEFAULTexfilPWSD";              //password for copying files from a windows victim to the SD Card       - main menu option 14
 
 //Toggle variables
 bool activate = false; // allow outgoing communication with C2 but do not accept commands until activated via C2 menu with the proper password
