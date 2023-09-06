@@ -1,0 +1,8 @@
+Created: 8-24-23
+Updated: -
+==================================================SEEK 998==================================================================================
+    Part Number                Vendor            Qty            Description            Reference Numbers              URL
+1)  RYLR993                    Amazon            1              Reyax993 LoRaWAN                                      https://a.co/d/0sFcTtP
+2)  855-M22-2511005            Mouser            2              XBee Header Pins       
+3)  S5480-ND                   Digi-Key          1              Reyax Radio Header
+4)  															JLCPCB Board

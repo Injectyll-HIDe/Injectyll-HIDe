@@ -1,0 +1,15 @@
+Created: 8-24-23
+Updated: -
+=================================================SEEK 993==========================================================================================================
+    Part Number                Vendor            Qty            Description                                    Reference Numbers              URL
+1)  RYLR993                    Amazon            1              Reyax993 LoRaWAN                                                              https://a.co/d/bzhc9iE
+2)  855-M22-2511005            Mouser            2              XBee Header Pins       
+3)  710-150080VS75000          Mouser            1              Green LED 0805            
+4)  710-150080RS75000          Mouser            1              Red LED 0805           
+5)  710-150080BS75000          Mouser            1              Blue LED 0805          
+6)  512-2N7002L                Mouser            3              MOSFET SOT-23_L2.9-W1.3-P0.95-LS2.4-BR
+7)  798-U.FL-R-SMT-110         Mouser            1              U.FL-R SMT Connector
+8)  652-CR0402AFX1001GAS       Mouser            6              1K Resistor R0402
+9)  652-CR0402AFX1002GAS       Mouser            1              10K Resistor R0402
+10) 															JLCPCB Board
+11) 538-211140-0100            Mouser            1              LoRa Antenna

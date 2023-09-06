@@ -1,0 +1,46 @@
+[
+S1
+HEADER 1X5 FEMALE AG4
+ZL262-5SG
+
+
+
+]
+[
+XB1
+XBEE 3 (TH)
+XBEE 3 (TH)
+
+
+
+]
+
+(
+XB1_3 
+S1-3
+XB1-3
+)
+
+(
+XB1_2 
+S1-2
+XB1-2
+)
+
+(
+XB1_1 
+S1-5
+XB1-1
+)
+
+(
+XB1_5 
+S1-4
+XB1-5
+)
+
+(
+XB1_10 
+S1-1
+XB1-10
+)
