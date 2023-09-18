@@ -1,0 +1,33 @@
+created: 8/24/23
+updated: -
+===========================================================IH-AA-AAA-NEB-JLCPCB-001==========================================================================
+    Part Number                      Vendor            Qty            Description            Reference Numbers              URL
+1)  ATSAMD21G18A-AUT                 Microchip         2              SAMD21 Microchip       MC1, MC2                     
+2)  80-C0603C105K4R                  Mouser            4              Capacitor 1.0uf        C1,C2,C4,C9                  
+3)  80-C0402C104K4R                  Mouser            8              Capacitor 0.1uf        C3,C5-C8,C10-C12               
+4)  80-C0603C106M9P                  Mouser            3              Capacitor 10.0uf       C13-C15                        
+5)  755-BD33IC0MEFJ-CE2              Mouser            1              3.3 VDC LVD Regulator  VR1
+6)  503398-1892                      Mouser            1              MicroSD Card Holder    SD1
+7)  652-CAY16A-4702F4LF              Mouser            1              Resistor Pack          R1
+8)  62001011821                      Mouser            2              XBee Header            XB
+9)  523-UE27-AC54-100                Mouser            1              Female USB-A TH        USB1  
+10) 538-48037-0001                   Mouser            1              Male USB-A TH          USB2
+11) 649-200215110010T1LF             Mouser            2              Micro SWD Connector    J1,J2
+11) User Supplied                                      1              MicroSD card           
+12) User Supplied                                      1              radio                  
+13) IH-AA-AAA-NEA-XXX-002_v2_40      JLCPCB            1              PCB
+
+
+
+==================================================Alternate Parts============================================================================
+1) SAMD21 Chips
+     -Microchip: ATSAMD21G18A-AUT
+     -Microchip: ATSAMD21G18A-AU
+     -Microchip: ATSAMD21G18A-A
+2) XBee Header Sockets
+	 -Sparkfun: https://www.sparkfun.com/products/8272
+	 -Mouser: https://www.mouser.com/ProductDetail/Wurth-Elektronik/62001011821
+3) XBee Header Pins 
+    -Mouser: 855-M22-2511005
+	-Digi-Key: 2057-2PH1-10UA-ND
+	-SparkFun: PRT-10112
